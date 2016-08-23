@@ -8,6 +8,9 @@
 
 import UIKit
 import CoreData
+import GoogleMaps
+import Firebase
+import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,7 +20,101 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        GMSServices.provideAPIKey("AIzaSyAk33tRPYRLW3jQfD463DSgt-Jr8tX4LO0")
+        FIRApp.configure()
+        let notificationType: UIUserNotificationType = [UIUserNotificationType.Alert,UIUserNotificationType.Badge,UIUserNotificationType.Sound]
+        let notificationSettings = UIUserNotificationSettings(forTypes: notificationType, categories: nil)
+        application.registerForRemoteNotifications()
+        application.registerUserNotificationSettings(notificationSettings)
+        FIRMessaging.messaging().connectWithCompletion({ (error) in
+            if (error != nil){
+                print("Unable to connect with FCM = \(error)")
+            } else {
+                print("Connected to FCM")
+            }
+        })
         return true
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        print(userInfo)
+        if let state = userInfo["state"] as? String{
+            switch state {
+            case "-1":
+                if let rating = userInfo["rating"] as? String{
+                    let user = DataBase.readUser()
+                    user.rating = Double(rating)
+                    DataBase.saveUser(user)
+                }
+                break
+            case "6":
+                if userInfo["message"] as? String == "5" {
+                    sendPopUp("Canceled")
+                }
+                if let serviceJson = userInfo["serviceInfo"] as? String{
+                    let data = serviceJson.dataUsingEncoding(NSUTF8StringEncoding)
+                    do {
+                        let service = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
+                        print(service)
+                        saveNewServiceState(service)
+                    } catch {}
+                    
+                    //TODO: check if notify or popup
+                }
+                break
+            default:
+                break
+            }
+        }
+        
+    }
+    
+    func saveNewServiceState(serviceJson:NSDictionary){
+        var services = DataBase.readServices()
+        let id = serviceJson["id"] as! String
+        let i = services?.indexOf({$0.id == id})
+        let format = NSDateFormatter()
+        format.dateFormat = "yyy-MM-dd HH:mm:ss"
+        if i == nil {
+            services?.append(addService(serviceJson))
+        } else {
+            services![i!].startedTime = format.dateFromString((serviceJson["fechaEmpezado"] as? String)!)
+            services![i!].status = serviceJson["status"] as! String
+            if let finalTime = serviceJson["horaFinalEstimada"] as? String{
+                services![i!].finalTime = format.dateFromString(finalTime)
+            }
+        }
+        
+        DataBase.saveServices(services!)
+        AppData.notifyNewData(true)
+    }
+    
+    func addService(jsonService: NSDictionary) -> Service{
+        let service = Service()
+        service.id = jsonService["id"] as! String
+        service.car = jsonService["coche"] as! String
+        service.status = jsonService["status"] as! String
+        service.service = jsonService["servicio"] as! String
+        service.price = jsonService["precio"] as! String
+        service.description = jsonService["descripcion"] as! String
+        service.latitud = Double(jsonService["latitud"] as! String)
+        service.longitud = Double(jsonService["longitud"] as! String)
+        service.clientName = jsonService["nombreCliente"] as! String
+        service.clientCel = jsonService["celCliente"] as! String
+        let format = NSDateFormatter()
+        format.dateFormat = "yyy-MM-dd HH:mm:ss"
+        if let startedTime = jsonService["fechaEmpezado"] as? String {
+            service.startedTime = format.dateFromString(startedTime)
+        }
+        if let finalTime = jsonService["horaFinalEstimada"] as? String {
+            service.finalTime = format.dateFromString(finalTime)
+        }
+
+        return service
+    }
+    
+    func sendPopUp(message:String){
+        AppData.saveMessage(message)
     }
 
     func applicationWillResignActive(application: UIApplication) {

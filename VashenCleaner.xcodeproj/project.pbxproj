@@ -7,15 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A802E6DDFA0CFC39FE828F83 /* libPods-VashenCleaner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4201041C72E59E9A4B84F491 /* libPods-VashenCleaner.a */; };
 		E714A62E1D682715008DE774 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A62D1D682715008DE774 /* AppDelegate.swift */; };
 		E714A6301D682715008DE774 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A62F1D682715008DE774 /* ViewController.swift */; };
 		E714A6331D682715008DE774 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E714A6311D682715008DE774 /* Main.storyboard */; };
 		E714A6361D682715008DE774 /* VashenCleaner.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */; };
 		E714A6381D682715008DE774 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E714A6371D682715008DE774 /* Assets.xcassets */; };
 		E714A63B1D682715008DE774 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E714A6391D682715008DE774 /* LaunchScreen.storyboard */; };
+		E714A64F1D682D08008DE774 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6451D682D08008DE774 /* AppData.swift */; };
+		E714A6501D682D08008DE774 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6461D682D08008DE774 /* User.swift */; };
+		E714A6511D682D08008DE774 /* ProfileReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6471D682D08008DE774 /* ProfileReader.swift */; };
+		E714A6531D682D08008DE774 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6491D682D08008DE774 /* Service.swift */; };
+		E714A6551D682D08008DE774 /* HttpServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A64B1D682D08008DE774 /* HttpServerConnection.swift */; };
+		E714A6561D682D08008DE774 /* DataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A64C1D682D08008DE774 /* DataBase.swift */; };
+		E714A65E1D682D23008DE774 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E714A65B1D682D23008DE774 /* Main.storyboard */; };
+		E714A65F1D682D23008DE774 /* Map.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E714A65C1D682D23008DE774 /* Map.storyboard */; };
+		E714A6611D682D35008DE774 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E714A6601D682D35008DE774 /* GoogleService-Info.plist */; };
+		E714A6811D682D5E008DE774 /* HistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6671D682D5E008DE774 /* HistoryController.swift */; };
+		E714A6861D682D5E008DE774 /* InitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A66C1D682D5E008DE774 /* InitController.swift */; };
+		E714A6871D682D5E008DE774 /* MapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A66D1D682D5E008DE774 /* MapController.swift */; };
+		E714A6881D682D5E008DE774 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A66E1D682D5E008DE774 /* MainController.swift */; };
+		E714A6891D682D5E008DE774 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A66F1D682D5E008DE774 /* LoginController.swift */; };
+		E714A68A1D682D5E008DE774 /* ForgotPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6701D682D5E008DE774 /* ForgotPasswordController.swift */; };
+		E714A6911D682D5E008DE774 /* LoadingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6771D682D5E008DE774 /* LoadingController.swift */; };
+		E714A6921D682D5E008DE774 /* HistoryRowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6781D682D5E008DE774 /* HistoryRowTableViewCell.swift */; };
+		E714A6951D682D5E008DE774 /* SummaryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A67B1D682D5E008DE774 /* SummaryController.swift */; };
+		E714A6981D682DE3008DE774 /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6971D682DE3008DE774 /* Product.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4201041C72E59E9A4B84F491 /* libPods-VashenCleaner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VashenCleaner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		57B7D8FB250804A8A75E72F4 /* Pods-VashenCleaner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VashenCleaner.release.xcconfig"; path = "Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner.release.xcconfig"; sourceTree = "<group>"; };
+		D31D2E33F4DFB75E965FB77B /* Pods-VashenCleaner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VashenCleaner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner.debug.xcconfig"; sourceTree = "<group>"; };
 		E714A62A1D682715008DE774 /* VashenCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VashenCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E714A62D1D682715008DE774 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E714A62F1D682715008DE774 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -24,6 +47,26 @@
 		E714A6371D682715008DE774 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E714A63A1D682715008DE774 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E714A63C1D682715008DE774 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E714A6421D6828E1008DE774 /* VashenCleaner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VashenCleaner-Bridging-Header.h"; sourceTree = "<group>"; };
+		E714A6451D682D08008DE774 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
+		E714A6461D682D08008DE774 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		E714A6471D682D08008DE774 /* ProfileReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileReader.swift; sourceTree = "<group>"; };
+		E714A6491D682D08008DE774 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		E714A64B1D682D08008DE774 /* HttpServerConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpServerConnection.swift; sourceTree = "<group>"; };
+		E714A64C1D682D08008DE774 /* DataBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataBase.swift; sourceTree = "<group>"; };
+		E714A65B1D682D23008DE774 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		E714A65C1D682D23008DE774 /* Map.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Map.storyboard; sourceTree = "<group>"; };
+		E714A6601D682D35008DE774 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E714A6671D682D5E008DE774 /* HistoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryController.swift; sourceTree = "<group>"; };
+		E714A66C1D682D5E008DE774 /* InitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitController.swift; sourceTree = "<group>"; };
+		E714A66D1D682D5E008DE774 /* MapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapController.swift; sourceTree = "<group>"; };
+		E714A66E1D682D5E008DE774 /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
+		E714A66F1D682D5E008DE774 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		E714A6701D682D5E008DE774 /* ForgotPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordController.swift; sourceTree = "<group>"; };
+		E714A6771D682D5E008DE774 /* LoadingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingController.swift; sourceTree = "<group>"; };
+		E714A6781D682D5E008DE774 /* HistoryRowTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryRowTableViewCell.swift; sourceTree = "<group>"; };
+		E714A67B1D682D5E008DE774 /* SummaryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SummaryController.swift; sourceTree = "<group>"; };
+		E714A6971D682DE3008DE774 /* Product.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,17 +74,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A802E6DDFA0CFC39FE828F83 /* libPods-VashenCleaner.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B548A459D5707007195B976 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D31D2E33F4DFB75E965FB77B /* Pods-VashenCleaner.debug.xcconfig */,
+				57B7D8FB250804A8A75E72F4 /* Pods-VashenCleaner.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		3BE6AE754CEE200C80AC6D14 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4201041C72E59E9A4B84F491 /* libPods-VashenCleaner.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E714A6211D682715008DE774 = {
 			isa = PBXGroup;
 			children = (
 				E714A62C1D682715008DE774 /* VashenCleaner */,
 				E714A62B1D682715008DE774 /* Products */,
+				3B548A459D5707007195B976 /* Pods */,
+				3BE6AE754CEE200C80AC6D14 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,15 +119,67 @@
 		E714A62C1D682715008DE774 /* VashenCleaner */ = {
 			isa = PBXGroup;
 			children = (
-				E714A62D1D682715008DE774 /* AppDelegate.swift */,
+				E714A6621D682D4A008DE774 /* Controllers */,
+				E714A6591D682D0D008DE774 /* Views */,
+				E714A6441D682D00008DE774 /* Model */,
+				E714A6431D6828E5008DE774 /* Support Files */,
 				E714A62F1D682715008DE774 /* ViewController.swift */,
 				E714A6311D682715008DE774 /* Main.storyboard */,
-				E714A6371D682715008DE774 /* Assets.xcassets */,
 				E714A6391D682715008DE774 /* LaunchScreen.storyboard */,
-				E714A63C1D682715008DE774 /* Info.plist */,
-				E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */,
+				E714A6601D682D35008DE774 /* GoogleService-Info.plist */,
 			);
 			path = VashenCleaner;
+			sourceTree = "<group>";
+		};
+		E714A6431D6828E5008DE774 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */,
+				E714A6421D6828E1008DE774 /* VashenCleaner-Bridging-Header.h */,
+				E714A62D1D682715008DE774 /* AppDelegate.swift */,
+				E714A63C1D682715008DE774 /* Info.plist */,
+				E714A6371D682715008DE774 /* Assets.xcassets */,
+			);
+			name = "Support Files";
+			sourceTree = "<group>";
+		};
+		E714A6441D682D00008DE774 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E714A64B1D682D08008DE774 /* HttpServerConnection.swift */,
+				E714A64C1D682D08008DE774 /* DataBase.swift */,
+				E714A6451D682D08008DE774 /* AppData.swift */,
+				E714A6971D682DE3008DE774 /* Product.swift */,
+				E714A6471D682D08008DE774 /* ProfileReader.swift */,
+				E714A6491D682D08008DE774 /* Service.swift */,
+				E714A6461D682D08008DE774 /* User.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		E714A6591D682D0D008DE774 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E714A65B1D682D23008DE774 /* Main.storyboard */,
+				E714A65C1D682D23008DE774 /* Map.storyboard */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		E714A6621D682D4A008DE774 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				E714A6671D682D5E008DE774 /* HistoryController.swift */,
+				E714A66C1D682D5E008DE774 /* InitController.swift */,
+				E714A66D1D682D5E008DE774 /* MapController.swift */,
+				E714A66E1D682D5E008DE774 /* MainController.swift */,
+				E714A66F1D682D5E008DE774 /* LoginController.swift */,
+				E714A6701D682D5E008DE774 /* ForgotPasswordController.swift */,
+				E714A6771D682D5E008DE774 /* LoadingController.swift */,
+				E714A6781D682D5E008DE774 /* HistoryRowTableViewCell.swift */,
+				E714A67B1D682D5E008DE774 /* SummaryController.swift */,
+			);
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,9 +189,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E714A63F1D682715008DE774 /* Build configuration list for PBXNativeTarget "VashenCleaner" */;
 			buildPhases = (
+				603504EDFE7A5CE6D25CB4E0 /* [CP] Check Pods Manifest.lock */,
 				E714A6261D682715008DE774 /* Sources */,
 				E714A6271D682715008DE774 /* Frameworks */,
 				E714A6281D682715008DE774 /* Resources */,
+				83939E338EDAE521BAAACC63 /* [CP] Embed Pods Frameworks */,
+				C64786979B57FEB9D7416C06 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -99,6 +217,12 @@
 				TargetAttributes = {
 					E714A6291D682715008DE774 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = T83HJT87GD;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -126,12 +250,63 @@
 			buildActionMask = 2147483647;
 			files = (
 				E714A63B1D682715008DE774 /* LaunchScreen.storyboard in Resources */,
+				E714A65E1D682D23008DE774 /* Main.storyboard in Resources */,
 				E714A6381D682715008DE774 /* Assets.xcassets in Resources */,
 				E714A6331D682715008DE774 /* Main.storyboard in Resources */,
+				E714A65F1D682D23008DE774 /* Map.storyboard in Resources */,
+				E714A6611D682D35008DE774 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		603504EDFE7A5CE6D25CB4E0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		83939E338EDAE521BAAACC63 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C64786979B57FEB9D7416C06 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E714A6261D682715008DE774 /* Sources */ = {
@@ -139,8 +314,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				E714A6361D682715008DE774 /* VashenCleaner.xcdatamodeld in Sources */,
+				E714A6531D682D08008DE774 /* Service.swift in Sources */,
+				E714A6891D682D5E008DE774 /* LoginController.swift in Sources */,
 				E714A6301D682715008DE774 /* ViewController.swift in Sources */,
+				E714A6811D682D5E008DE774 /* HistoryController.swift in Sources */,
+				E714A6921D682D5E008DE774 /* HistoryRowTableViewCell.swift in Sources */,
+				E714A6951D682D5E008DE774 /* SummaryController.swift in Sources */,
 				E714A62E1D682715008DE774 /* AppDelegate.swift in Sources */,
+				E714A6551D682D08008DE774 /* HttpServerConnection.swift in Sources */,
+				E714A6911D682D5E008DE774 /* LoadingController.swift in Sources */,
+				E714A6501D682D08008DE774 /* User.swift in Sources */,
+				E714A6561D682D08008DE774 /* DataBase.swift in Sources */,
+				E714A68A1D682D5E008DE774 /* ForgotPasswordController.swift in Sources */,
+				E714A6511D682D08008DE774 /* ProfileReader.swift in Sources */,
+				E714A6861D682D5E008DE774 /* InitController.swift in Sources */,
+				E714A6871D682D5E008DE774 /* MapController.swift in Sources */,
+				E714A6881D682D5E008DE774 /* MainController.swift in Sources */,
+				E714A6981D682DE3008DE774 /* Product.swift in Sources */,
+				E714A64F1D682D08008DE774 /* AppData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,23 +444,27 @@
 		};
 		E714A6401D682715008DE774 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D31D2E33F4DFB75E965FB77B /* Pods-VashenCleaner.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = VashenCleaner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = alan.VashenCleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "VashenCleaner/VashenCleaner-Bridging-Header.h";
 			};
 			name = Debug;
 		};
 		E714A6411D682715008DE774 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57B7D8FB250804A8A75E72F4 /* Pods-VashenCleaner.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = VashenCleaner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = alan.VashenCleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "VashenCleaner/VashenCleaner-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -292,6 +487,7 @@
 				E714A6411D682715008DE774 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
