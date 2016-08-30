@@ -40,13 +40,13 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         initLocation()
-        initView()
+        initTimers()
         NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(MapController.initMap), userInfo: nil, repeats: false)
+        initValues()
     }
     
-    override func viewDidAppear(animated: Bool) {
-        initValues()
-        initTimers()
+    override func viewDidDisappear(animated: Bool) {
+        cancelTimers()
     }
     
     func initValues(){
@@ -98,22 +98,35 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
         if currentLocation != nil {
             do {
                 try User.updateLocation(token, latitud: currentLocation.coordinate.latitude, longitud: currentLocation.coordinate.longitude)
+            } catch User.UserError.noSessionFound{
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.presentViewController(nextViewController, animated: true, completion: nil)
+                })
             } catch {
-                //TODO: location error
+                print("Error updating location")
             }
         }
     }
     
     func findRequestsNearby(){
-        if activeService == nil {
+        if activeService == nil && currentLocation != nil{
             do {
                 let servicesAmount = services.count
                 services = try Service.getServices(currentLocation.coordinate.latitude, longitud: currentLocation.coordinate.longitude, withToken: token)
                 if servicesAmount == 0 && services.count > 0 {
                     //SendAlert for services found
                 }
-            } catch {
+            } catch Service.Error.noSessionFound{
                 //TODO: check errors
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.presentViewController(nextViewController, animated: true, completion: nil)
+                })
+            } catch {
+                print("Error getting services")
             }
         }
     }
@@ -155,8 +168,8 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
             configureActiveServiceView()
             while !AppData.newData(){}
         }
-        activeService = nil
         configureServiceForDelete()
+        activeService = nil
     }
     
     func configureActiveServiceView(){
@@ -167,6 +180,7 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
             break
         case "Started":
             clock = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(MapController.modifyClock), userInfo: nil, repeats: true)
+            
             let display = "Tiempo restante: -- min"
             configureActiveServiceStarted(display)
             break
@@ -187,8 +201,9 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
             }
             self.statusDisplay.userInteractionEnabled = true
             self.statusDisplay.setTitle(display, forState: .Normal)
-            //TODO: implement informationLayout.hidden = false
+            self.informationLayout.hidden = false
         })
+        getGeoLocation()
     }
     
     func configureActiveServiceStarted(display:String){
@@ -200,7 +215,7 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
             }
             self.statusDisplay.userInteractionEnabled = true
             self.statusDisplay.setTitle(display, forState: .Normal)
-            //TODO: implement informationLayout.hidden = false
+            self.informationLayout.hidden = false
         })
     }
     
@@ -210,7 +225,13 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
                 //TODO: createAlert("Cancel")
             })
         } else {
-            //Change to summary
+            let auxService = activeService
+            dispatch_async(dispatch_get_main_queue(), {
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("summary") as! SummaryController
+                nextViewController.service = auxService
+                self.presentViewController(nextViewController, animated:true, completion:nil)
+            })
         }
         AppData.saveMessage("")
         
@@ -220,13 +241,33 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
         //TODO: Notification
     }
     
-    
+    func getGeoLocation(){
+        let location = CLLocation(latitude: self.activeService.latitud, longitude: self.activeService.longitud)
+        CLGeocoder().reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
+            //print(location)
+            
+            if error != nil {
+                print("Reverse geocoder failed with error" + error!.localizedDescription)
+                self.locationText.text = ""
+                return
+            }
+            
+            if placemarks!.count > 0 {
+                let pm = placemarks![0] //as! CLPlacemark
+                self.locationText.text = pm.thoroughfare! + " " + pm.subThoroughfare! + ", " + pm.subLocality! + ", " + pm.locality! + ", " + pm.administrativeArea! + ", " + pm.country!
+                print(self.locationText.text)
+            }
+            else {
+                print("Problem with the data received from geocoder")
+            }
+        })
+    }
     
     func modifyClock(){
         if activeService != nil || activeService.finalTime != nil {
             //TODO: Get diff in time with sign
-            let diff = NSDate().timeIntervalSinceDate(activeService.finalTime)
-            let minutes = diff/1000/60
+            let diff = activeService.finalTime.timeIntervalSinceNow
+            let minutes = diff/1000/60 + 1
             var display = ""
             if diff < 0 {
                 display = "Terminar"
@@ -238,6 +279,73 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     }
     
 
+    @IBAction func onClickChangeStatus(sender: AnyObject) {
+        if activeService == nil {
+            tryAcceptService()
+        } else if activeService.status == "Accepted" {
+            changeServiceStatus(Service.STARTED,statusString: "Started")
+        } else if activeService.status == "Started" {
+            changeServiceStatus(Service.FINISHED,statusString: "Finished")
+        }
+    }
+    
+    func tryAcceptService(){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+            for service in self.services {
+                do {
+                    let acceptedService = try Service.acceptService(service.id, withToken: self.token)
+                    var auxServices = DataBase.readServices()
+                    auxServices?.append(acceptedService)
+                    DataBase.saveServices(auxServices!)
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.statusDisplay.setTitle("Aceptando", forState: .Normal)
+                    })
+                    AppData.saveIdService(acceptedService.id)
+                    AppData.notifyNewData(true)
+                    self.startActiveServiceCycle()
+                    return
+                } catch Service.Error.noSessionFound{
+                    let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                    let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.presentViewController(nextViewController, animated: true, completion: nil)
+                    })
+                } catch {
+                    print("Error accepting service")
+                }
+            }
+        })
+    }
+    
+    func changeServiceStatus(status: Int, statusString:String){
+        do {
+            if lastStateSent != status {
+                lastStateSent = status
+                try Service.changeServiceStatus(activeService.id, withToken: token, withStatusId: String(status))
+                var auxServices = DataBase.readServices()
+                let index = auxServices?.indexOf({$0.id == activeService.id})
+                auxServices![index!].status = statusString
+                if statusString == "Started" {
+                    let format = NSDateFormatter()
+                    format.dateFormat = "yyy-MM-dd HH:mm:ss"
+                    auxServices![index!].startedTime = NSDate()
+                    auxServices![index!].finalTime = NSDate().dateByAddingTimeInterval(Double(auxServices![index!].estimatedTime)! * 60)
+                }
+                DataBase.saveServices(auxServices!)
+                AppData.saveIdService(activeService.id)
+                AppData.notifyNewData(true)
+            }
+            
+        } catch Service.Error.noSessionFound{
+            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+            dispatch_async(dispatch_get_main_queue(), {
+                self.presentViewController(nextViewController, animated: true, completion: nil)
+            })
+        } catch {
+            print("Error changing status")
+        }
+    }
     
     func initLocation(){
         self.locManager.requestAlwaysAuthorization()
@@ -259,15 +367,19 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     }
     
     @IBAction func onClickTravel(sender: AnyObject) {
-    }
-    func initView(){
-
+        let url = NSURL(string: "comgooglemaps://?saddr=&daddr=\(activeService.latitud),\(activeService.longitud)&directionsmode=driving")!
+        UIApplication.sharedApplication().openURL(url)
     }
     
     func initMap(){
         //Create a GMSCameraPosition that tells the map to display the
         //coordinate -33.86,151.20 at zoom level 6.
-        let camera = GMSCameraPosition.cameraWithLatitude(currentLocation.coordinate.latitude, longitude: currentLocation.coordinate.longitude, zoom: 15.0)
+        var camera: GMSCameraPosition!
+        if currentLocation == nil {
+            camera = GMSCameraPosition.cameraWithLatitude(0, longitude: 0, zoom: 15.0)
+        } else {
+            camera = GMSCameraPosition.cameraWithLatitude(currentLocation.coordinate.latitude, longitude: currentLocation.coordinate.longitude, zoom: 15.0)
+        }
         
         map = GMSMapView.mapWithFrame(self.mapView.bounds, camera: camera)
         map.delegate = self

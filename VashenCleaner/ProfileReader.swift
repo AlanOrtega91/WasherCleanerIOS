@@ -71,6 +71,7 @@ public class ProfileReader {
         let params = "email=\(email)&password=\(password)"
         do{
             var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            print(response)
             if response["Status"] as! String != "OK" {
                 throw ProfileReaderError.errorReadingData
             }

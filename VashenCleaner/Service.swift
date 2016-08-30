@@ -21,7 +21,6 @@ public class Service {
     
     public var estimatedTime:String!
     
-    public var acceptedTime:NSDate!
     public var latitud:Double!
     public var longitud:Double!
     
@@ -36,7 +35,7 @@ public class Service {
     
     
     public static func changeServiceStatus(idService:String, withToken token:String, withStatusId statusId:String)throws {
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "CancelServiceStatus")
+        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "ChangeServiceStatus")
         let params = "serviceId=\(idService)&statusId=\(statusId)&token=\(token)&cancelCode=0"
         do{
             var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
@@ -44,12 +43,11 @@ public class Service {
                 throw Error.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw Error.errorCancelingRequest
+                throw Error.errorChangingStatusRequest
             }
 
-        } catch (let e) {
-            print(e)
-            throw Error.errorCancelingRequest
+        } catch HttpServerConnection.Error.connectionException {
+            throw Error.errorChangingStatusRequest
         }
     }
     
@@ -81,8 +79,7 @@ public class Service {
             service.estimatedTime = json["tiempoEstimado"] as! String
             
             return service
-        } catch (let e) {
-            print(e)
+        } catch HttpServerConnection.Error.connectionException {
             throw Error.errorServiceTaken
         }
     }
@@ -99,20 +96,19 @@ public class Service {
             if response["Status"] as! String != "OK" {
                 throw Error.errorServiceTaken
             }
-            if let json = response["History"] as? Array<NSDictionary> {
+            if let json = response["services"] as? Array<NSDictionary> {
                 for serviceJson in json {
                     let service = Service()
-                    service.id = serviceJson["id"] as! String
+                    service.id = serviceJson["idServicioPedido"] as! String
                     service.address = serviceJson["Direccion"] as! String
-                    service.latitud = Double(serviceJson["latitud"] as! String)!
-                    service.longitud = Double(serviceJson["longitud"] as! String)!
+                    service.latitud = Double(serviceJson["Latitud"] as! String)!
+                    service.longitud = Double(serviceJson["Longitud"] as! String)!
                     services.append(service)
                 }
             }
             
             return services
-        } catch (let e) {
-            print(e)
+        } catch HttpServerConnection.Error.connectionException {
             return services
         }
     }
@@ -120,7 +116,7 @@ public class Service {
     enum Error: ErrorType {
         case noSessionFound
         case userBlock
-        case errorCancelingRequest
+        case errorChangingStatusRequest
         case errorServiceTaken
     }
     

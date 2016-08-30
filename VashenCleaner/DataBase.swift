@@ -33,6 +33,8 @@ public class DataBase {
             newUser.setValue(user.lastName, forKey: "lastName")
             newUser.setValue(user.email, forKey: "email")
             newUser.setValue(user.phone, forKey: "phone")
+            newUser.setValue(user.rating, forKey: "rating")
+            newUser.setValue(user.encodedImage, forKey: "encodedImage")
             try context.save()
         } catch {
             
@@ -52,7 +54,8 @@ public class DataBase {
             user.lastName = results.valueForKey("lastName") as! String
             user.email = results.valueForKey("email") as! String
             user.phone = results.valueForKey("phone") as! String
-            user.encodedImage = results.valueForKey("encodedImage") as? String
+            user.encodedImage = results.valueForKey("encodedImage") as! String
+            user.rating = results.valueForKey("rating") as! Double
             return user
         } catch {
             return user
@@ -77,8 +80,10 @@ public class DataBase {
                 newService.setValue(service.latitud, forKey: "latitud")
                 newService.setValue(service.longitud, forKey: "longitud")
                 newService.setValue(service.status, forKey: "status")
+                newService.setValue(service.clientName, forKey: "clientName")
+                newService.setValue(service.clientCel, forKey: "clientCel")
                 newService.setValue(service.finalTime, forKey: "finalTime")
-                newService.setValue(service.acceptedTime, forKey: "acceptedTime")
+                newService.setValue(service.estimatedTime, forKey: "estimatedTime")
                 try context.save()
             }
         } catch {
@@ -91,7 +96,7 @@ public class DataBase {
         let context = appDelegate.managedObjectContext
         let fetchRequest = NSFetchRequest(entityName: "Service")
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "acceptedTime", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "startedTime", ascending: false)]
         do {
             let results = try context.executeFetchRequest(fetchRequest)
             var services: Array<Service> = Array<Service>()
@@ -101,13 +106,15 @@ public class DataBase {
                 service.car = serviceResult.valueForKey("car") as! String
                 service.service = serviceResult.valueForKey("service") as! String
                 service.price = serviceResult.valueForKey("price") as! String
-                service.description = serviceResult.valueForKey("description") as! String
+                service.description = serviceResult.valueForKey("serviceDescription") as! String
                 service.startedTime = serviceResult.valueForKey("startedTime") as? NSDate
                 service.latitud = serviceResult.valueForKey("latitud") as! Double
                 service.longitud = serviceResult.valueForKey("longitud") as! Double
                 service.status = serviceResult.valueForKey("status") as! String
+                service.clientName = serviceResult.valueForKey("clientName") as! String
+                service.clientCel = serviceResult.valueForKey("clientCel") as! String
+                service.estimatedTime = serviceResult.valueForKey("estimatedTime") as! String
                 service.finalTime = serviceResult.valueForKey("finalTime") as? NSDate
-                service.acceptedTime = serviceResult.valueForKey("acceptedTime") as? NSDate
                 services.append(service)
             }
             return services
@@ -122,7 +129,7 @@ public class DataBase {
         let fetchRequest = NSFetchRequest(entityName: "Service")
         fetchRequest.returnsObjectsAsFaults = false
         let statusPredicate = NSPredicate(format: "status != %@", "Canceled")
-        let ratingPredicate = NSPredicate(format: "rating == %@", "-1")
+        let ratingPredicate = NSPredicate(format: "status != %@", "Finished")
         fetchRequest.predicate = NSCompoundPredicate(type: .AndPredicateType, subpredicates: [statusPredicate, ratingPredicate])
         
         do {
@@ -133,13 +140,15 @@ public class DataBase {
                 service.car = results.valueForKey("car") as! String
                 service.service = results.valueForKey("service") as! String
                 service.price = results.valueForKey("price") as! String
-                service.description = results.valueForKey("description") as! String
+                service.description = results.valueForKey("serviceDescription") as! String
                 service.startedTime = results.valueForKey("startedTime") as? NSDate
                 service.latitud = results.valueForKey("latitud") as! Double
                 service.longitud = results.valueForKey("longitud") as! Double
                 service.status = results.valueForKey("status") as! String
+                service.clientName = results.valueForKey("clientName") as! String
+                service.clientCel = results.valueForKey("clientCel") as! String
+                service.estimatedTime = results.valueForKey("estimatedTime") as! String
                 service.finalTime = results.valueForKey("finalTime") as? NSDate
-                service.acceptedTime = results.valueForKey("acceptedTime") as? NSDate
                 return service
             }
             return nil
@@ -153,10 +162,9 @@ public class DataBase {
         let context = appDelegate.managedObjectContext
         let fetchRequest = NSFetchRequest(entityName: "Service")
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "acceptedTime", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "startedTime", ascending: false)]
         let statusPredicate = NSPredicate(format: "status == %@", "Finished")
-        let ratingPredicate = NSPredicate(format: "rating != %@", "-1")
-        fetchRequest.predicate = NSCompoundPredicate(type: .AndPredicateType, subpredicates: [statusPredicate, ratingPredicate])
+        fetchRequest.predicate = NSCompoundPredicate(type: .AndPredicateType, subpredicates: [statusPredicate])
         var services: Array<Service> = Array<Service>()
         do {
             let results = try context.executeFetchRequest(fetchRequest)
@@ -166,13 +174,15 @@ public class DataBase {
                 service.car = serviceResult.valueForKey("car") as! String
                 service.service = serviceResult.valueForKey("service") as! String
                 service.price = serviceResult.valueForKey("price") as! String
-                service.description = serviceResult.valueForKey("description") as! String
+                service.description = serviceResult.valueForKey("serviceDescription") as! String
                 service.startedTime = serviceResult.valueForKey("startedTime") as! NSDate
                 service.latitud = serviceResult.valueForKey("latitud") as! Double
                 service.longitud = serviceResult.valueForKey("longitud") as! Double
                 service.status = serviceResult.valueForKey("status") as! String
+                service.clientName = serviceResult.valueForKey("clientName") as! String
+                service.clientCel = serviceResult.valueForKey("clientCel") as! String
+                service.estimatedTime = serviceResult.valueForKey("estimatedTime") as! String
                 service.finalTime = serviceResult.valueForKey("finalTime") as! NSDate
-                service.acceptedTime = serviceResult.valueForKey("acceptedTime") as! NSDate
                 services.append(service)
             }
             return services
@@ -185,15 +195,12 @@ public class DataBase {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         do{
-        try deleteTable("User", context: context)
-         try deleteTable("Service", context: context)
-         try deleteTable("Car", context: context)
-         try deleteTable("UserCard", context: context)
-            
+            try deleteTable("User", context: context)
+            try deleteTable("Service", context: context)
         } catch {
             
         }
     }
-
+    
     public static var errorSavingData: ErrorType!
 }

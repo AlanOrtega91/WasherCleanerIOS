@@ -85,7 +85,7 @@ public class AppData {
     
     public static func saveMessage(message:String){
         let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.setObject(message, forKey: SERVICE_CHANGED)
+        settings.setObject(message, forKey: MESSAGE)
     }
     
     public static func getMessage() -> String {

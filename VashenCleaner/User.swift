@@ -34,7 +34,7 @@ public class User {
                 throw UserError.errorUpdatingLocation
             }
             
-        } catch {
+        } catch HttpServerConnection.Error.connectionException{
             throw UserError.errorUpdatingLocation
         }
     }
@@ -51,7 +51,7 @@ public class User {
                 throw UserError.errorSavingFireBaseToken
             }
             
-        } catch {
+        } catch HttpServerConnection.Error.connectionException{
             throw UserError.errorSavingFireBaseToken
         }
     }
@@ -67,7 +67,7 @@ public class User {
                 throw UserError.errorWithLogOut
             }
             
-        } catch {
+        } catch HttpServerConnection.Error.connectionException{
             throw UserError.errorWithLogOut
         }
     }

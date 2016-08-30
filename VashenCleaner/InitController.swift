@@ -44,7 +44,7 @@ class InitController: UIViewController {
     func tryReadUser() {
         do{
             try ProfileReader.run()
-            var user = DataBase.readUser()
+            let user = DataBase.readUser()
             user.token = token
             AppData.saveData(user)
             
@@ -64,6 +64,7 @@ class InitController: UIViewController {
             ProfileReader.delete()
             changeView("Main", controllerName: "main")
         } catch {
+            ProfileReader.delete()
             let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("main") as! MainController
             dispatch_async(dispatch_get_main_queue(), {
                 self.presentViewController(nextViewController, animated: true, completion: nil)

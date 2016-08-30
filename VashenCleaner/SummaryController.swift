@@ -24,8 +24,13 @@ class SummaryController: UIViewController {
         if service != nil {
             let format = NSDateFormatter()
             format.dateFormat = "yyy-MM-dd HH:mm:ss"
-            date.text = format.stringFromDate(service.acceptedTime)
+            date.text = format.stringFromDate(service.startedTime)
             price.text = service.price
         }
+    }
+    @IBAction func onClickContinue(sender: AnyObject) {
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map") as! MapController
+        self.presentViewController(nextViewController, animated:true, completion:nil)
     }
 }

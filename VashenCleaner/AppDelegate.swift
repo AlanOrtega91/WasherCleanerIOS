@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        GMSServices.provideAPIKey("AIzaSyAk33tRPYRLW3jQfD463DSgt-Jr8tX4LO0")
+        GMSServices.provideAPIKey("AIzaSyAhJQS8DvKSEuu7CmGZrcqAcGKpYHnYaQA")
         FIRApp.configure()
         let notificationType: UIUserNotificationType = [UIUserNotificationType.Alert,UIUserNotificationType.Badge,UIUserNotificationType.Sound]
         let notificationSettings = UIUserNotificationSettings(forTypes: notificationType, categories: nil)
@@ -48,6 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 break
             case "6":
+                print(userInfo["message"])
                 if userInfo["message"] as? String == "5" {
                     sendPopUp("Canceled")
                 }
@@ -78,8 +79,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if i == nil {
             services?.append(addService(serviceJson))
         } else {
-            services![i!].startedTime = format.dateFromString((serviceJson["fechaEmpezado"] as? String)!)
-            services![i!].status = serviceJson["status"] as! String
+            
+            let status = serviceJson["status"] as! String
+            services![i!].status = status
+            if status == "Canceled" {
+                sendPopUp("Canceled")
+            }
+            if let startedTime =  serviceJson["fechaEmpezado"] as? String{
+                services![i!].startedTime = format.dateFromString(startedTime)
+            }
             if let finalTime = serviceJson["horaFinalEstimada"] as? String{
                 services![i!].finalTime = format.dateFromString(finalTime)
             }

@@ -33,7 +33,7 @@ public class LoadingController: UIViewController {
         do{
             try ProfileReader.run(email, withPassword: password)
             let token = AppData.readToken()
-            let firebaseToken = AppData.readFirebaseToken()
+            let firebaseToken = FIRInstanceID.instanceID().token()!
             try User.saveFirebaseToken(token, pushNotificationToken: firebaseToken)
             
             let storyBoard = UIStoryboard(name: "Map", bundle: nil)
@@ -42,8 +42,10 @@ public class LoadingController: UIViewController {
                 self.presentViewController(nextViewController, animated: true, completion: nil)
             })
         } catch{
-            let storyBoard = UIStoryboard(name: "main", bundle: nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("login") as! LoginController
+            nextViewController.emailSet = email
+            nextViewController.passwordSet = password
             dispatch_async(dispatch_get_main_queue(), {
                 self.presentViewController(nextViewController, animated: true, completion: nil)
             })

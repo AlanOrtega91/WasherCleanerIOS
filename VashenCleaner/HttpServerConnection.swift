@@ -31,10 +31,10 @@ public class HttpServerConnection
             return dataString as! Dictionary<String, AnyObject>
         } catch (let e) {
             print(e)
-            throw HttpServerConnectionError.connectionException
+            throw Error.connectionException
         }
     }
-    enum  HttpServerConnectionError: ErrorType {
+    enum  Error: ErrorType {
         case connectionException
     }
 }

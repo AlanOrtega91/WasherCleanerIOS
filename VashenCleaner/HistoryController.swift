@@ -39,7 +39,7 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
         let cell = self.tableView.dequeueReusableCellWithIdentifier("historyCell") as! HistoryRowTableViewCell
         let format = NSDateFormatter()
         format.dateFormat = "yyy-MM-dd HH:mm:ss"
-        cell.date.text = format.stringFromDate(service.acceptedTime)
+        cell.date.text = format.stringFromDate(service.startedTime)
         cell.serviceType.text = service.service + " $" + service.price
         //setCleanerImage(cell.cleanerImage, withId: service.cleanerId)
         setMapImage(cell.locationImage, withService: service)
@@ -73,7 +73,7 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
     
     @IBAction func clickedCancel(sender: AnyObject) {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("reveal_controller") as! MapController
+        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("menu") as! MenuController
         self.presentViewController(nextViewController, animated:true, completion:nil)
     }
 

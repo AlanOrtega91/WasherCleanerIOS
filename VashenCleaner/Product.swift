@@ -39,8 +39,7 @@ public class Product {
             }
             
             return products
-        } catch (let e) {
-            print(e)
+        } catch HttpServerConnection.Error.connectionException {
             throw Error.errorGettingProducts
         }
     }
