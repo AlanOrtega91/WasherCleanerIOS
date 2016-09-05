@@ -94,9 +94,7 @@ public class ProfileReader {
         user.id = parameters["idLavador"]! as! String
         user.token = parameters["Token"]! as! String
         user.phone = parameters["Telefono"]! as! String
-        if (parameters["FotoURL"] as? String) != nil{
-            user.encodedImage = User.getEncodedImageForUser(user.id)
-        }
+        user.encodedImage = User.getEncodedImageForUser(user.id)
         user.rating = rating
     }
     
@@ -116,6 +114,11 @@ public class ProfileReader {
             service.clientName = serviceJSON["nombreCliente"] as? String
             service.clientCel = serviceJSON["telCliente"] as? String
             service.estimatedTime = serviceJSON["tiempoEstimado"] as? String
+            service.plates = serviceJSON["Placas"] as! String
+            service.model = serviceJSON["Modelo"] as! String
+            service.brand = serviceJSON["Marca"] as! String
+            service.color = serviceJSON["Color"] as! String
+            service.type = serviceJSON["Tipo"] as! String
             
             let format = NSDateFormatter()
             format.dateFormat = "yyy-MM-dd HH:mm:ss"

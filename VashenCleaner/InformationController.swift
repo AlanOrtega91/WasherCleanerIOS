@@ -20,8 +20,9 @@ class InformationController: UIViewController {
         let service = DataBase.getActiveService()
         clientName.text = service?.clientName
         clientCel.text = service?.clientCel
-        plates.text = service?.car
+        plates.text = service?.plates
         serviceLabel.text = service?.service
+        type.text = service?.type
     }
     @IBAction func clickedClose(sender: AnyObject) {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)

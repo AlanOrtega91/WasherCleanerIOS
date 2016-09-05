@@ -28,6 +28,11 @@ public class Service {
     public var clientCel:String!
     public var id:String!
     public var address:String!
+    public var plates:String!
+    public var model:String!
+    public var brand:String!
+    public var color:String!
+    public var type:String!
     
     public static let STARTED = 4
     public static let FINISHED = 5
@@ -77,6 +82,11 @@ public class Service {
             service.clientCel = json["telCliente"] as? String
             service.status = "Accepted"
             service.estimatedTime = json["tiempoEstimado"] as! String
+            service.plates = json["Placas"] as! String
+            service.model = json["Modelo"] as! String
+            service.brand = json["Marca"] as! String
+            service.color = json["Color"] as! String
+            service.type = json["Tipo"] as! String
             
             return service
         } catch HttpServerConnection.Error.connectionException {
@@ -113,11 +123,29 @@ public class Service {
         }
     }
     
+    public static func cancelService(idService:String, withToken token:String) throws {
+        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "ChangeServiceStatus")
+        let params = "serviceId=\(idService)&statusId=6&token=\(token)&cancelCode=\(2)"
+        do{
+            var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            if response["Status"] as! String == "SESSION ERROR" {
+                throw Error.noSessionFound
+            }
+            if response["Status"] as! String != "OK" {
+                throw Error.errorCancelingRequest
+            }
+            
+        } catch HttpServerConnection.Error.connectionException {
+            throw Error.errorCancelingRequest
+        }
+    }
+    
     enum Error: ErrorType {
         case noSessionFound
         case userBlock
         case errorChangingStatusRequest
         case errorServiceTaken
+        case errorCancelingRequest
     }
     
 }

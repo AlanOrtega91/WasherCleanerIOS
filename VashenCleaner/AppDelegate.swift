@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     do {
                         let service = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
                         print(service)
-                        saveNewServiceState(service)
+                        deleteService(service)
                     } catch {}
                     
                     //TODO: check if notify or popup
@@ -119,6 +119,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return service
+    }
+    
+    func deleteService(serviceJson:NSDictionary){
+        var services = DataBase.readServices()
+        let id = serviceJson["id"] as! String
+        let i = services?.indexOf({$0.id == id})
+        
+        services?.removeAtIndex(i!)
+        DataBase.saveServices(services!)
+        AppData.notifyNewData(true)
     }
     
     func sendPopUp(message:String){

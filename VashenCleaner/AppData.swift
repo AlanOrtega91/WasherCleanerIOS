@@ -97,6 +97,11 @@ public class AppData {
         }
     }
     
+    public static func deleteMessage() {
+        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        settings.removeObjectForKey(MESSAGE)
+    }
+    
     public static func eliminateData() {
         let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
         settings.removeObjectForKey(TOKEN)

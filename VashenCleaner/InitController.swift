@@ -48,7 +48,7 @@ class InitController: UIViewController {
             user.token = token
             AppData.saveData(user)
             
-            let firebaseToken = FIRInstanceID.instanceID().token()!
+            let firebaseToken = FIRInstanceID.instanceID().token()
             FIRMessaging.messaging().connectWithCompletion({ (error) in
                 if (error != nil){
                     print("Unable to connect with FCM = \(error)")
@@ -56,7 +56,7 @@ class InitController: UIViewController {
                     print("Connected to FCM")
                 }
             })
-            try User.saveFirebaseToken(token,pushNotificationToken: firebaseToken)
+            try User.saveFirebaseToken(token,pushNotificationToken: firebaseToken!)
 
             changeView("Map", controllerName: "map")
         } catch User.UserError.errorSavingFireBaseToken{

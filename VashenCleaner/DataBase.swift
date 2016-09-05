@@ -84,6 +84,13 @@ public class DataBase {
                 newService.setValue(service.clientCel, forKey: "clientCel")
                 newService.setValue(service.finalTime, forKey: "finalTime")
                 newService.setValue(service.estimatedTime, forKey: "estimatedTime")
+                
+                newService.setValue(service.plates, forKey: "plates")
+                newService.setValue(service.model, forKey: "model")
+                newService.setValue(service.brand, forKey: "brand")
+                newService.setValue(service.color, forKey: "color")
+                newService.setValue(service.type, forKey: "type")
+                
                 try context.save()
             }
         } catch {
@@ -115,6 +122,19 @@ public class DataBase {
                 service.clientCel = serviceResult.valueForKey("clientCel") as! String
                 service.estimatedTime = serviceResult.valueForKey("estimatedTime") as! String
                 service.finalTime = serviceResult.valueForKey("finalTime") as? NSDate
+                
+                service.plates = serviceResult.valueForKey("plates") as! String
+                service.model = serviceResult.valueForKey("model") as! String
+                service.brand = serviceResult.valueForKey("brand") as! String
+                service.color = serviceResult.valueForKey("color") as! String
+                service.type = serviceResult.valueForKey("type") as! String
+                
+                service.plates = serviceResult.valueForKey("plates") as! String
+                service.model = serviceResult.valueForKey("model") as! String
+                service.brand = serviceResult.valueForKey("brand") as! String
+                service.color = serviceResult.valueForKey("color") as! String
+                service.type = serviceResult.valueForKey("type") as! String
+                
                 services.append(service)
             }
             return services
@@ -149,6 +169,12 @@ public class DataBase {
                 service.clientCel = results.valueForKey("clientCel") as! String
                 service.estimatedTime = results.valueForKey("estimatedTime") as! String
                 service.finalTime = results.valueForKey("finalTime") as? NSDate
+                
+                service.plates = results.valueForKey("plates") as! String
+                service.model = results.valueForKey("model") as! String
+                service.brand = results.valueForKey("brand") as! String
+                service.color = results.valueForKey("color") as! String
+                service.type = results.valueForKey("type") as! String
                 return service
             }
             return nil
@@ -183,6 +209,12 @@ public class DataBase {
                 service.clientCel = serviceResult.valueForKey("clientCel") as! String
                 service.estimatedTime = serviceResult.valueForKey("estimatedTime") as! String
                 service.finalTime = serviceResult.valueForKey("finalTime") as! NSDate
+                service.plates = serviceResult.valueForKey("plates") as! String
+                service.model = serviceResult.valueForKey("model") as! String
+                service.brand = serviceResult.valueForKey("brand") as! String
+                service.color = serviceResult.valueForKey("color") as! String
+                service.type = serviceResult.valueForKey("type") as! String
+                
                 services.append(service)
             }
             return services
