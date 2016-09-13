@@ -25,8 +25,9 @@ class InformationController: UIViewController {
         type.text = service?.type
     }
     @IBAction func clickedClose(sender: AnyObject) {
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map") as! MapController
-        self.presentViewController(nextViewController, animated:true, completion:nil)
+//        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
+//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map") as! MapController
+//        self.presentViewController(nextViewController, animated:true, completion:nil)
+        self.navigationController?.popViewControllerAnimated(true)
     }
 }

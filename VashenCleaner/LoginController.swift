@@ -34,8 +34,9 @@ public class LoginController: UIViewController {
     }
     
     @IBAction func cancelClicked(sender: AnyObject) {
-        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("main") as! MainController
-        self.presentViewController(nextViewController, animated:true, completion:nil)
+        self.navigationController?.popViewControllerAnimated(true)
+//        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("main") as! MainController
+//        self.presentViewController(nextViewController, animated:true, completion:nil)
     }
     
   
@@ -44,7 +45,8 @@ public class LoginController: UIViewController {
         let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("loading") as! LoadingController
         nextViewController.email = email.text!
         nextViewController.password = password.text!
-        self.presentViewController(nextViewController, animated: true, completion: nil)
+        self.navigationController?.pushViewController(nextViewController, animated: true)
+        //self.presentViewController(nextViewController, animated: true, completion: nil)
     }
 
     /*

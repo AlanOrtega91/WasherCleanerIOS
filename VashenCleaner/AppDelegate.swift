@@ -26,13 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let notificationSettings = UIUserNotificationSettings(forTypes: notificationType, categories: nil)
         application.registerForRemoteNotifications()
         application.registerUserNotificationSettings(notificationSettings)
-        FIRMessaging.messaging().connectWithCompletion({ (error) in
-            if (error != nil){
-                print("Unable to connect with FCM = \(error)")
-            } else {
-                print("Connected to FCM")
-            }
-        })
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.tokenRefreshNotificaiton),
+                                                         name: kFIRInstanceIDTokenRefreshNotification, object: nil)
         return true
     }
     
@@ -134,6 +129,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func sendPopUp(message:String){
         AppData.saveMessage(message)
     }
+    
+    func tokenRefreshNotificaiton(notification: NSNotification) {
+        if let refreshedToken = FIRInstanceID.instanceID().token() {
+            print("InstanceID token: \(refreshedToken)")
+            // Connect to FCM since connection may have failed when attempted before having a token.
+            connectToFcm()
+        }
+    }
+    // [END refresh_token]
+    
+    // [START connect_to_fcm]
+    func connectToFcm() {
+        FIRMessaging.messaging().connectWithCompletion { (error) in
+            if (error != nil) {
+                print("Unable to connect with FCM. \(error)")
+            } else {
+                print("Connected to FCM.")
+            }
+        }
+    }
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        print(NSString(data: deviceToken, encoding: NSUTF8StringEncoding))
+        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.Unknown)
+    }
+
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

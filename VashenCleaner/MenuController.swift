@@ -35,9 +35,7 @@ class MenuController: UIViewController {
     
 
     @IBAction func clickClose(sender: AnyObject) {
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map") as! MapController
-        self.presentViewController(nextViewController, animated:true, completion:nil)
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     
@@ -46,12 +44,14 @@ class MenuController: UIViewController {
             ProfileReader.delete()
             try user.sendLogout()
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main") as! MainController
-            self.presentViewController(nextViewController, animated:true, completion:nil)
+            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+            self.navigationController?.setViewControllers([nextViewController], animated: true)
+            self.navigationController?.popToRootViewControllerAnimated(true)
         } catch {
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main") as! MainController
-            self.presentViewController(nextViewController, animated:true, completion:nil)
+            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+            self.navigationController?.setViewControllers([nextViewController], animated: true)
+            self.navigationController?.popToRootViewControllerAnimated(true)
         }
     }
 

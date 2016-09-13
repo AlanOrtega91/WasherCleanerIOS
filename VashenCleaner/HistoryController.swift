@@ -72,9 +72,10 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
     
     
     @IBAction func clickedCancel(sender: AnyObject) {
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("menu") as! MenuController
-        self.presentViewController(nextViewController, animated:true, completion:nil)
+//        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
+//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("menu") as! MenuController
+//        self.presentViewController(nextViewController, animated:true, completion:nil)
+        self.navigationController?.popViewControllerAnimated(true)
     }
 
 }

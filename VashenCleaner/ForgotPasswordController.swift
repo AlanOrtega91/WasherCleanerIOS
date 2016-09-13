@@ -23,22 +23,14 @@ class ForgotPasswordController: UIViewController {
     }
     
     @IBAction func clickedCancel(sender: AnyObject) {
-        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("login") as! LoginController
-        self.presentViewController(nextViewController, animated:true, completion:nil)
+        self.navigationController?.popViewControllerAnimated(true)
+//        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("login") as! LoginController
+//        self.presentViewController(nextViewController, animated:true, completion:nil)
     }
 
     @IBAction func clickedRecover(sender: AnyObject) {
-        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("login") as! LoginController
-        self.presentViewController(nextViewController, animated:true, completion:nil)
+        self.navigationController?.popViewControllerAnimated(true)
+//        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("login") as! LoginController
+//        self.presentViewController(nextViewController, animated:true, completion:nil)
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -43,11 +43,13 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
         initLocation()
         initTimers()
         initValues()
-        NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: #selector(MapController.initMap), userInfo: nil, repeats: false)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC/3)), dispatch_get_main_queue(), {
+            self.initMap()
+        })
     }
-    
-    override func viewDidDisappear(animated: Bool) {
-        cancelTimers()
+    override func viewWillDisappear(animated: Bool) {
+        //cancelTimers()
+        print("cancel timers")
     }
     
     func initValues(){
@@ -67,9 +69,10 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     func initTimers(){
         let  findRequestsNearbyQueue = dispatch_queue_create("com.alan.nearbyCleaners", DISPATCH_QUEUE_CONCURRENT);
         findRequestsNearbyTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, findRequestsNearbyQueue);
-        dispatch_source_set_timer(findRequestsNearbyTimer, dispatch_time(DISPATCH_TIME_NOW, 0), NSEC_PER_SEC/50, 2*NSEC_PER_SEC);
+        dispatch_source_set_timer(findRequestsNearbyTimer, dispatch_time(DISPATCH_TIME_NOW, 0), NSEC_PER_SEC, 2*NSEC_PER_SEC);
         
         dispatch_source_set_event_handler(findRequestsNearbyTimer, {
+            print("requestNearby Timer")
             self.updateCleanerLocation()
             if self.activeService == nil {
                 self.findRequestsNearby()
@@ -89,6 +92,7 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
         dispatch_source_set_timer(drawPathTimer, dispatch_time(DISPATCH_TIME_NOW, 0), NSEC_PER_SEC, 2*NSEC_PER_SEC);
         
         dispatch_source_set_event_handler(drawPathTimer, {
+            print("Update Location Timer")
             //self.drawPath()
             self.updateLocationMarker()
         });
@@ -183,7 +187,6 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
             break
         case "Started":
             clock = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(MapController.modifyClock), userInfo: nil, repeats: true)
-            
             let display = "Tiempo restante: -- min"
             configureActiveServiceStarted(display)
             break
@@ -235,7 +238,8 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
                 let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("summary") as! SummaryController
                 nextViewController.service = auxService
-                self.presentViewController(nextViewController, animated:true, completion:nil)
+                self.navigationController?.pushViewController(nextViewController, animated: true)
+                //self.presentViewController(nextViewController, animated:true, completion:nil)
             })
         }
         AppData.saveMessage("")
@@ -385,16 +389,24 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     }
     
     func initLocation(){
+        locManager.delegate = self
         self.locManager.requestAlwaysAuthorization()
         self.locManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
-            locManager.delegate = self
+            locManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if CLLocationManager.locationServicesEnabled() {
             locManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locManager.startUpdatingLocation()
         }
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("location updated")
         currentLocation = manager.location
     }
     
@@ -409,45 +421,53 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     }
     
     func initMap(){
-        //Create a GMSCameraPosition that tells the map to display the
-        //coordinate -33.86,151.20 at zoom level 6.
-        var camera: GMSCameraPosition!
-        if currentLocation == nil {
-            camera = GMSCameraPosition.cameraWithLatitude(0, longitude: 0, zoom: 15.0)
-        } else {
-            camera = GMSCameraPosition.cameraWithLatitude(currentLocation.coordinate.latitude, longitude: currentLocation.coordinate.longitude, zoom: 15.0)
-        }
-        
-        map = GMSMapView.mapWithFrame(self.mapView.bounds, camera: camera)
-        map.delegate = self
-        map.camera = camera
-        map.myLocationEnabled = true
-        map.accessibilityElementsHidden = false
-        self.mapView.addSubview(map)
-        self.view.sendSubviewToBack(mapView)
-        
-        // Creates a marker in the center of the map.
-        locationMarker.position = CLLocationCoordinate2D(latitude: camera.target.latitude, longitude: camera.target.longitude)
-        locationMarker.map = map
+        dispatch_async(dispatch_get_main_queue(), {
+            var camera = GMSCameraPosition.cameraWithLatitude(0, longitude: 0, zoom: 15.0)
+            self.map = GMSMapView.mapWithFrame(self.mapView.bounds, camera: camera)
+            self.map.delegate = self
+            self.map.myLocationEnabled = true
+            self.map.accessibilityElementsHidden = false
+            self.mapView.addSubview(self.map)
+            
+            if self.currentLocation != nil {
+                camera = GMSCameraPosition.cameraWithLatitude(self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude, zoom: 15.0)
+            } else if self.map.myLocation != nil{
+                camera = GMSCameraPosition.cameraWithLatitude(self.map.myLocation!.coordinate.latitude, longitude: self.map.myLocation!.coordinate.longitude, zoom: 15.0)
+            }
+            
+            
+            // Creates a marker in the center of the map.
+            self.locationMarker.position = CLLocationCoordinate2D(latitude: camera.target.latitude, longitude: camera.target.longitude)
+            self.locationMarker.map = self.map
+        })
     }
     
     @IBAction func myLocationClicked(sender: AnyObject) {
         var camera:GMSCameraPosition
-        if self.currentLocation == nil {
-            camera = GMSCameraPosition.cameraWithLatitude(0, longitude: 0, zoom: 15.0)
-        } else {
+        if self.currentLocation != nil {
             camera = GMSCameraPosition.cameraWithLatitude(self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude, zoom: 15.0)
+        } else if self.map.myLocation != nil{
+            camera = GMSCameraPosition.cameraWithLatitude(self.map.myLocation!.coordinate.latitude, longitude: self.map.myLocation!.coordinate.longitude, zoom: 15.0)
+        } else {
+            camera = GMSCameraPosition.cameraWithLatitude(0, longitude: 0, zoom: 15.0)
         }
         self.map.animateToCameraPosition(camera)
     }
+    @IBAction func menuClick(sender: AnyObject) {
+        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("menu") as! MenuController
+        self.navigationController?.pushViewController(nextViewController, animated: true)
+    }
     
+    @IBAction func infoClick(sender: AnyObject) {
+        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("information") as! InformationController
+        self.navigationController?.pushViewController(nextViewController, animated: true)
+    }
     func createAlertInfo(message:String){
         dispatch_async(dispatch_get_main_queue(), {
             let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
         })
     }
-    
     
     enum Error: ErrorType{
         case invalidVehicle
