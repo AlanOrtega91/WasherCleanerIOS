@@ -2,17 +2,17 @@
 //  ProductCell.swift
 //  VashenCleaner
 //
-//  Created by Alan on 8/23/16.
+//  Created by Alan on 9/19/16.
 //  Copyright © 2016 Alan. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-class ProductCell: UITableViewCell {
-
+class ProductCell: UICollectionViewCell {
     
+    @IBOutlet weak var product: UIImageView!
+    @IBOutlet weak var traditional: UIImageView!
+    @IBOutlet weak var eco: UIImageView!
     @IBOutlet weak var amount: UILabel!
-    @IBOutlet weak var brand: UILabel!
-    @IBOutlet weak var productDescription: UILabel!
-    @IBOutlet weak var productImage: UIImageView!
+    @IBOutlet weak var name: UILabel!
 }

@@ -22,19 +22,19 @@ public class AppData {
     static var IDSERVICE = "idService"
     
     public static func saveData(user: User){
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.setObject(user.token, forKey: TOKEN)
-        settings.setObject(user.id, forKey: IDCLIENT)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.set(user.token, forKey: TOKEN)
+        settings.set(user.id, forKey: IDCLIENT)
     }
     
     public static func saveIdService(id:String) {
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.setObject(id, forKey: IDSERVICE)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.set(id, forKey: IDSERVICE)
     }
     
     public static func readToken() -> String{
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        if let token = settings.stringForKey(TOKEN) {
+        let settings : UserDefaults = UserDefaults.standard
+        if let token = settings.string(forKey: TOKEN) {
             return token
         } else {
             return ""
@@ -42,8 +42,8 @@ public class AppData {
     }
     
     public static func readUserId() -> String{
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        if let idClient = settings.stringForKey(IDCLIENT) {
+        let settings : UserDefaults = UserDefaults.standard
+        if let idClient = settings.string(forKey: IDCLIENT) {
             return idClient
         } else {
             return ""
@@ -51,13 +51,13 @@ public class AppData {
     }
     
     public static func savePaymentToken(paymentToken:String){
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.setObject(paymentToken, forKey: PAYMENT_TOKEN)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.set(paymentToken, forKey: PAYMENT_TOKEN)
     }
     
     public static func readPaymentToken() -> String{
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        if let paymentToken = settings.stringForKey(PAYMENT_TOKEN) {
+        let settings : UserDefaults = UserDefaults.standard
+        if let paymentToken = settings.string(forKey: PAYMENT_TOKEN) {
             return paymentToken
         } else {
             return ""
@@ -65,8 +65,8 @@ public class AppData {
     }
     
     public static func readFirebaseToken() -> String{
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        if let firebaseToken = settings.stringForKey(FB_TOKEN) {
+        let settings : UserDefaults = UserDefaults.standard
+        if let firebaseToken = settings.string(forKey: FB_TOKEN) {
             return firebaseToken
         } else {
             return ""
@@ -74,23 +74,23 @@ public class AppData {
     }
     
     public static func newData() -> Bool{
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        let newData = settings.boolForKey(SERVICE_CHANGED)
+        let settings : UserDefaults = UserDefaults.standard
+        let newData = settings.bool(forKey: SERVICE_CHANGED)
         return newData
     }
     public static func notifyNewData(newData:Bool){
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.setObject(newData, forKey: SERVICE_CHANGED)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.set(newData, forKey: SERVICE_CHANGED)
     }
     
     public static func saveMessage(message:String){
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.setObject(message, forKey: MESSAGE)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.set(message, forKey: MESSAGE)
     }
     
     public static func getMessage() -> String {
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        if let message = settings.stringForKey(MESSAGE) {
+        let settings : UserDefaults = UserDefaults.standard
+        if let message = settings.string(forKey: MESSAGE) {
             return message
         } else {
             return ""
@@ -98,15 +98,15 @@ public class AppData {
     }
     
     public static func deleteMessage() {
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.removeObjectForKey(MESSAGE)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.removeObject(forKey: MESSAGE)
     }
     
     public static func eliminateData() {
-        let settings : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        settings.removeObjectForKey(TOKEN)
-        settings.removeObjectForKey(SENT_ALERT)
-        settings.removeObjectForKey(IDCLIENT)
-        settings.removeObjectForKey(PAYMENT_TOKEN)
+        let settings : UserDefaults = UserDefaults.standard
+        settings.removeObject(forKey: TOKEN)
+        settings.removeObject(forKey: SENT_ALERT)
+        settings.removeObject(forKey: IDCLIENT)
+        settings.removeObject(forKey: PAYMENT_TOKEN)
     }
 }

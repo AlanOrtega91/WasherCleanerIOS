@@ -12,21 +12,21 @@ import CoreData
 public class DataBase {
     
     public static func deleteTable(table:String, context: NSManagedObjectContext) throws{
-        let fetchRequest = NSFetchRequest(entityName: table)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: table)
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do{
-            try context.executeRequest(deleteRequest)
+            try context.execute(deleteRequest)
         } catch{
             throw errorSavingData
         }
     }
     
     public static func saveUser(user:User){
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         do{
-            try deleteTable("User",context: context)
-            let newUser = NSEntityDescription.insertNewObjectForEntityForName("User", inManagedObjectContext: context)
+            try deleteTable(table: "User",context: context)
+            let newUser = NSEntityDescription.insertNewObject(forEntityName: "User", into: context)
             
             newUser.setValue(user.id, forKey: "id")
             newUser.setValue(user.name, forKey: "name")
@@ -42,20 +42,20 @@ public class DataBase {
     }
     
     public static func readUser() -> User{
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "User")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "User")
         fetchRequest.returnsObjectsAsFaults = false
         let user: User = User()
         do {
-            let results = try context.executeFetchRequest(fetchRequest)[0]
-            user.id = results.valueForKey("id") as! String
-            user.name = results.valueForKey("name") as! String
-            user.lastName = results.valueForKey("lastName") as! String
-            user.email = results.valueForKey("email") as! String
-            user.phone = results.valueForKey("phone") as! String
-            user.encodedImage = results.valueForKey("encodedImage") as! String
-            user.rating = results.valueForKey("rating") as! Double
+            let results = try context.fetch(fetchRequest)[0] as! NSManagedObject
+            user.id = results.value(forKey: "id") as! String
+            user.name = results.value(forKey: "name") as! String
+            user.lastName = results.value(forKey: "lastName") as! String
+            user.email = results.value(forKey: "email") as! String
+            user.phone = results.value(forKey: "phone") as! String
+            user.encodedImage = results.value(forKey: "encodedImage") as! String
+            user.rating = results.value(forKey: "rating") as! Double
             return user
         } catch {
             return user
@@ -64,13 +64,13 @@ public class DataBase {
     
     
     public static func saveServices(services: Array<Service>) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
         do{
-            try deleteTable("Service",context: context)
+            try deleteTable(table: "Service",context: context)
             for service in services {
-                let newService = NSEntityDescription.insertNewObjectForEntityForName("Service", inManagedObjectContext: context)
+                let newService = NSEntityDescription.insertNewObject(forEntityName: "Service", into: context)
                 newService.setValue(service.id, forKey: "id")
                 newService.setValue(service.car, forKey: "car")
                 newService.setValue(service.service, forKey: "service")
@@ -99,41 +99,41 @@ public class DataBase {
     }
     
     public static func readServices() -> Array<Service>?{
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "Service")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Service")
         fetchRequest.returnsObjectsAsFaults = false
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "startedTime", ascending: false)]
         do {
-            let results = try context.executeFetchRequest(fetchRequest)
+            let results = try context.fetch(fetchRequest) as! [NSManagedObject]
             var services: Array<Service> = Array<Service>()
             for serviceResult in results {
                 let service: Service = Service()
-                service.id = serviceResult.valueForKey("id") as! String
-                service.car = serviceResult.valueForKey("car") as! String
-                service.service = serviceResult.valueForKey("service") as! String
-                service.price = serviceResult.valueForKey("price") as! String
-                service.description = serviceResult.valueForKey("serviceDescription") as! String
-                service.startedTime = serviceResult.valueForKey("startedTime") as? NSDate
-                service.latitud = serviceResult.valueForKey("latitud") as! Double
-                service.longitud = serviceResult.valueForKey("longitud") as! Double
-                service.status = serviceResult.valueForKey("status") as! String
-                service.clientName = serviceResult.valueForKey("clientName") as! String
-                service.clientCel = serviceResult.valueForKey("clientCel") as! String
-                service.estimatedTime = serviceResult.valueForKey("estimatedTime") as! String
-                service.finalTime = serviceResult.valueForKey("finalTime") as? NSDate
+                service.id = serviceResult.value(forKey: "id") as! String
+                service.car = serviceResult.value(forKey: "car") as! String
+                service.service = serviceResult.value(forKey: "service") as! String
+                service.price = serviceResult.value(forKey: "price") as! String
+                service.description = serviceResult.value(forKey: "serviceDescription") as! String
+                service.startedTime = serviceResult.value(forKey: "startedTime") as? Date
+                service.latitud = serviceResult.value(forKey: "latitud") as! Double
+                service.longitud = serviceResult.value(forKey: "longitud") as! Double
+                service.status = serviceResult.value(forKey: "status") as! String
+                service.clientName = serviceResult.value(forKey: "clientName") as! String
+                service.clientCel = serviceResult.value(forKey: "clientCel") as! String
+                service.estimatedTime = serviceResult.value(forKey: "estimatedTime") as! String
+                service.finalTime = serviceResult.value(forKey: "finalTime") as? Date
                 
-                service.plates = serviceResult.valueForKey("plates") as! String
-                service.model = serviceResult.valueForKey("model") as! String
-                service.brand = serviceResult.valueForKey("brand") as! String
-                service.color = serviceResult.valueForKey("color") as! String
-                service.type = serviceResult.valueForKey("type") as! String
+                service.plates = serviceResult.value(forKey: "plates") as! String
+                service.model = serviceResult.value(forKey: "model") as! String
+                service.brand = serviceResult.value(forKey: "brand") as! String
+                service.color = serviceResult.value(forKey: "color") as! String
+                service.type = serviceResult.value(forKey: "type") as! String
                 
-                service.plates = serviceResult.valueForKey("plates") as! String
-                service.model = serviceResult.valueForKey("model") as! String
-                service.brand = serviceResult.valueForKey("brand") as! String
-                service.color = serviceResult.valueForKey("color") as! String
-                service.type = serviceResult.valueForKey("type") as! String
+                service.plates = serviceResult.value(forKey: "plates") as! String
+                service.model = serviceResult.value(forKey: "model") as! String
+                service.brand = serviceResult.value(forKey: "brand") as! String
+                service.color = serviceResult.value(forKey: "color") as! String
+                service.type = serviceResult.value(forKey: "type") as! String
                 
                 services.append(service)
             }
@@ -144,37 +144,37 @@ public class DataBase {
     }
     
     public static func getActiveService() -> Service?{
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "Service")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Service")
         fetchRequest.returnsObjectsAsFaults = false
         let statusPredicate = NSPredicate(format: "status != %@", "Canceled")
         let ratingPredicate = NSPredicate(format: "status != %@", "Finished")
-        fetchRequest.predicate = NSCompoundPredicate(type: .AndPredicateType, subpredicates: [statusPredicate, ratingPredicate])
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [statusPredicate, ratingPredicate])
         
         do {
-            if try context.executeFetchRequest(fetchRequest).count > 0 {
-                let results = try context.executeFetchRequest(fetchRequest)[0]
+            if try context.fetch(fetchRequest).count > 0 {
+                let results = try context.fetch(fetchRequest)[0] as! NSManagedObject
                 let service: Service = Service()
-                service.id = results.valueForKey("id") as! String
-                service.car = results.valueForKey("car") as! String
-                service.service = results.valueForKey("service") as! String
-                service.price = results.valueForKey("price") as! String
-                service.description = results.valueForKey("serviceDescription") as! String
-                service.startedTime = results.valueForKey("startedTime") as? NSDate
-                service.latitud = results.valueForKey("latitud") as! Double
-                service.longitud = results.valueForKey("longitud") as! Double
-                service.status = results.valueForKey("status") as! String
-                service.clientName = results.valueForKey("clientName") as! String
-                service.clientCel = results.valueForKey("clientCel") as! String
-                service.estimatedTime = results.valueForKey("estimatedTime") as! String
-                service.finalTime = results.valueForKey("finalTime") as? NSDate
+                service.id = results.value(forKey: "id") as! String
+                service.car = results.value(forKey: "car") as! String
+                service.service = results.value(forKey: "service") as! String
+                service.price = results.value(forKey: "price") as! String
+                service.description = results.value(forKey: "serviceDescription") as! String
+                service.startedTime = results.value(forKey: "startedTime") as? Date
+                service.latitud = results.value(forKey: "latitud") as! Double
+                service.longitud = results.value(forKey: "longitud") as! Double
+                service.status = results.value(forKey: "status") as! String
+                service.clientName = results.value(forKey: "clientName") as! String
+                service.clientCel = results.value(forKey: "clientCel") as! String
+                service.estimatedTime = results.value(forKey: "estimatedTime") as! String
+                service.finalTime = results.value(forKey: "finalTime") as? Date
                 
-                service.plates = results.valueForKey("plates") as! String
-                service.model = results.valueForKey("model") as! String
-                service.brand = results.valueForKey("brand") as! String
-                service.color = results.valueForKey("color") as! String
-                service.type = results.valueForKey("type") as! String
+                service.plates = results.value(forKey: "plates") as! String
+                service.model = results.value(forKey: "model") as! String
+                service.brand = results.value(forKey: "brand") as! String
+                service.color = results.value(forKey: "color") as! String
+                service.type = results.value(forKey: "type") as! String
                 return service
             }
             return nil
@@ -184,36 +184,36 @@ public class DataBase {
     }
     
     public static func getFinishedServices() -> Array<Service>{
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "Service")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Service")
         fetchRequest.returnsObjectsAsFaults = false
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "startedTime", ascending: false)]
         let statusPredicate = NSPredicate(format: "status == %@", "Finished")
-        fetchRequest.predicate = NSCompoundPredicate(type: .AndPredicateType, subpredicates: [statusPredicate])
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [statusPredicate])
         var services: Array<Service> = Array<Service>()
         do {
-            let results = try context.executeFetchRequest(fetchRequest)
+            let results = try context.fetch(fetchRequest) as! [NSManagedObject]
             for serviceResult in results {
                 let service: Service = Service()
-                service.id = serviceResult.valueForKey("id") as! String
-                service.car = serviceResult.valueForKey("car") as! String
-                service.service = serviceResult.valueForKey("service") as! String
-                service.price = serviceResult.valueForKey("price") as! String
-                service.description = serviceResult.valueForKey("serviceDescription") as! String
-                service.startedTime = serviceResult.valueForKey("startedTime") as! NSDate
-                service.latitud = serviceResult.valueForKey("latitud") as! Double
-                service.longitud = serviceResult.valueForKey("longitud") as! Double
-                service.status = serviceResult.valueForKey("status") as! String
-                service.clientName = serviceResult.valueForKey("clientName") as! String
-                service.clientCel = serviceResult.valueForKey("clientCel") as! String
-                service.estimatedTime = serviceResult.valueForKey("estimatedTime") as! String
-                service.finalTime = serviceResult.valueForKey("finalTime") as! NSDate
-                service.plates = serviceResult.valueForKey("plates") as! String
-                service.model = serviceResult.valueForKey("model") as! String
-                service.brand = serviceResult.valueForKey("brand") as! String
-                service.color = serviceResult.valueForKey("color") as! String
-                service.type = serviceResult.valueForKey("type") as! String
+                service.id = serviceResult.value(forKey: "id") as! String
+                service.car = serviceResult.value(forKey: "car") as! String
+                service.service = serviceResult.value(forKey: "service") as! String
+                service.price = serviceResult.value(forKey: "price") as! String
+                service.description = serviceResult.value(forKey: "serviceDescription") as! String
+                service.startedTime = serviceResult.value(forKey: "startedTime") as! Date
+                service.latitud = serviceResult.value(forKey: "latitud") as! Double
+                service.longitud = serviceResult.value(forKey: "longitud") as! Double
+                service.status = serviceResult.value(forKey: "status") as! String
+                service.clientName = serviceResult.value(forKey: "clientName") as! String
+                service.clientCel = serviceResult.value(forKey: "clientCel") as! String
+                service.estimatedTime = serviceResult.value(forKey: "estimatedTime") as! String
+                service.finalTime = serviceResult.value(forKey: "finalTime") as! Date
+                service.plates = serviceResult.value(forKey: "plates") as! String
+                service.model = serviceResult.value(forKey: "model") as! String
+                service.brand = serviceResult.value(forKey: "brand") as! String
+                service.color = serviceResult.value(forKey: "color") as! String
+                service.type = serviceResult.value(forKey: "type") as! String
                 
                 services.append(service)
             }
@@ -224,15 +224,15 @@ public class DataBase {
     }
     
     public static func deleteAllTables() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         do{
-            try deleteTable("User", context: context)
-            try deleteTable("Service", context: context)
+            try deleteTable(table: "User", context: context)
+            try deleteTable(table: "Service", context: context)
         } catch {
             
         }
     }
     
-    public static var errorSavingData: ErrorType!
+    public static var errorSavingData: Error!
 }

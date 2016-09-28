@@ -15,84 +15,76 @@ public class LoadingController: UIViewController {
     var email: String!
     var password: String!
     var clickedAlertOK = false
-
+    @IBOutlet weak var loading: UIImageView!
+    
     public override func viewDidLoad() {
         initView()
-        FIRMessaging.messaging().connectWithCompletion({ (error) in
+        FIRMessaging.messaging().connect(completion: { (error) in
             if (error != nil){
                 print("Unable to connect with FCM = \(error)")
             } else {
                 print("Connected to FCM")
             }
         })
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-            // do some task
+        DispatchQueue.global().async {
             self.readProfile()
-        });
+        }
     }
     
     func initView(){
-        let backgroundImage = UIImageView(frame: UIScreen.mainScreen().bounds)
-        backgroundImage.image = UIImage(named: "loading")
-        self.view.insertSubview(backgroundImage, atIndex: 0)
+        var imgList = [UIImage]()
+        for countValue in 0...119{
+            let strImageName = "frame_\(countValue)_delay-0.04s"
+            let image = UIImage(named: strImageName)
+            if image != nil {
+                imgList.append(image!)
+            }
+        }
+        self.loading.animationImages = imgList
+        self.loading.animationDuration = 5.0
+        self.loading.startAnimating()
     }
     
     func readProfile(){
         do{
-            try ProfileReader.run(email, withPassword: password)
+            try ProfileReader.run(email: email, withPassword: password)
             let token = AppData.readToken()
-            let firebaseToken = FIRInstanceID.instanceID().token()
-            if firebaseToken == nil {
-                throw User.UserError.errorSavingFireBaseToken
-            } else {
-                try User.saveFirebaseToken(token, pushNotificationToken: firebaseToken!)
-                FIRMessaging.messaging().connectWithCompletion({ (error) in
-                    if (error != nil){
-                        print("Unable to connect with FCM = \(error)")
-                    } else {
-                        print("Connected to FCM")
-                    }
-                })
+            if let firebaseToken = FIRInstanceID.instanceID().token() {
+                try User.saveFirebaseToken(token: token,pushNotificationToken: firebaseToken)
             }
             let storyBoard = UIStoryboard(name: "Map", bundle: nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map")
-            dispatch_async(dispatch_get_main_queue(), {
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "reveal_controller")
+            DispatchQueue.main.async {
                 self.navigationController?.setViewControllers([nextViewController], animated: true)
-                self.navigationController?.popToRootViewControllerAnimated(true)
-            })
+                _ = self.navigationController?.popToRootViewController(animated: true)
+            }
         } catch User.UserError.errorSavingFireBaseToken{
             ProfileReader.delete()
-            createAlertInfo("Error con el sistema de notificaciones")
+            createAlertInfo(message: "Error con el sistema de notificaciones")
             while !clickedAlertOK {
                 
             }
-//            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-//            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("login") as! LoginController
-//            nextViewController.emailSet = email
-//            nextViewController.passwordSet = password
-            dispatch_async(dispatch_get_main_queue(), {
-                //self.presentViewController(nextViewController, animated: true, completion: nil)
-                self.navigationController?.popViewControllerAnimated(true)
-            })
+            DispatchQueue.main.async {
+                _ = self.navigationController?.popViewController(animated: true)
+            }
         } catch{
-//            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-//            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("login") as! LoginController
-//            nextViewController.emailSet = email
-//            nextViewController.passwordSet = password
-            dispatch_async(dispatch_get_main_queue(), {
-                //self.presentViewController(nextViewController, animated: true, completion: nil)
-                self.navigationController?.popViewControllerAnimated(true)
-            })
+            createAlertInfo(message: "Error con el inicio de sesion")
+            while !clickedAlertOK {
+                
+            }
+            DispatchQueue.main.async {
+                _ = self.navigationController?.popViewController(animated: true)
+            }
         }
     }
     
     func createAlertInfo(message:String){
-        dispatch_async(dispatch_get_main_queue(), {
-            let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: {action in
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {action in
                 self.clickedAlertOK = true
             }))
-            self.presentViewController(alert, animated: true, completion: nil)
-        })
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }

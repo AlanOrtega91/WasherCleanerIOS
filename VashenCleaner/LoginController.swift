@@ -17,9 +17,9 @@ public class LoginController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        let backgroundImage = UIImageView(frame: UIScreen.mainScreen().bounds)
+        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
         backgroundImage.image = UIImage(named: "background")
-        self.view.insertSubview(backgroundImage, atIndex: 0)
+        self.view.insertSubview(backgroundImage, at: 0)
         if emailSet != "" {
             email.text = emailSet
         }
@@ -33,20 +33,17 @@ public class LoginController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func cancelClicked(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(true)
-//        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("main") as! MainController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
+    @IBAction func cancelClicked(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
   
 
-    @IBAction func sendLogin(sender: AnyObject) {
-        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("loading") as! LoadingController
+    @IBAction func sendLogin(_ sender: AnyObject) {
+        let nextViewController = self.storyboard!.instantiateViewController(withIdentifier: "loading") as! LoadingController
         nextViewController.email = email.text!
         nextViewController.password = password.text!
         self.navigationController?.pushViewController(nextViewController, animated: true)
-        //self.presentViewController(nextViewController, animated: true, completion: nil)
     }
 
     /*

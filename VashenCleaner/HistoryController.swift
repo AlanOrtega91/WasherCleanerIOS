@@ -16,9 +16,9 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let backgroundImage = UIImageView(frame: UIScreen.mainScreen().bounds)
+        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
         backgroundImage.image = UIImage(named: "background")
-        self.view.insertSubview(backgroundImage, atIndex: 0)
+        self.view.insertSubview(backgroundImage, at: 0)
         initValues()
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -30,52 +30,36 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
     
     
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return services.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let service = self.services[indexPath.row]
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("historyCell") as! HistoryRowTableViewCell
-        let format = NSDateFormatter()
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "historyCell") as! HistoryRowTableViewCell
+        let format = DateFormatter()
         format.dateFormat = "yyy-MM-dd HH:mm:ss"
-        cell.date.text = format.stringFromDate(service.startedTime)
+        format.locale = Locale(identifier: "us")
+        cell.date.text = format.string(from: service.startedTime)
         cell.serviceType.text = service.service + " $" + service.price
-        //setCleanerImage(cell.cleanerImage, withId: service.cleanerId)
-        setMapImage(cell.locationImage, withService: service)
+        DispatchQueue.global().async {
+            self.setMapImage(map: cell.locationImage, withService: service)
+        }
         return cell
     }
     
     func setMapImage(map: UIImageView, withService service:Service){
-        let url = NSURL(string: "https://maps.googleapis.com/maps/api/staticmap?center=\(service.latitud),\(service.longitud)&markers=color:red%7Clabel:S%7C\(service.latitud),\(service.longitud)&zoom=15&size=1000x400&key=")
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            if let data = NSData(contentsOfURL: url!){
-                dispatch_async(dispatch_get_main_queue(), {
-                    map.image = UIImage(data: data)
-                });
-            }
-        }
+        let primer = "https://maps.googleapis.com/maps/api/staticmap?center=" + String(service.latitud) + ","
+        let segundo = String(service.longitud) + "&markers=color:red%7Clabel:S%7C" + String(service.latitud) + "," + String(service.longitud) + "&zoom=15&size=1000x400&key="
+        let url = NSURL(string: primer + segundo)
+        do {
+            let data = try Data(contentsOf: url as! URL)
+            map.image = UIImage(data: data as Data)
+        } catch {}
     }
     
-    func setCleanerImage(image:UIImageView, withId id: String){
-        let url = NSURL(string: "http://imanio.zone/Vashen/images/cleaners/" + id + "/profile_image.jpg")
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            if let data = NSData(contentsOfURL: url!){
-                dispatch_async(dispatch_get_main_queue(), {
-                    image.image = UIImage(data: data)
-                });
-            }
-        }
-    }
-    
-    
-    @IBAction func clickedCancel(sender: AnyObject) {
-//        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("menu") as! MenuController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
-        self.navigationController?.popViewControllerAnimated(true)
+    @IBAction func clickedCancel(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 
 }

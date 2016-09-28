@@ -16,16 +16,16 @@ public class Product {
     var description:String!
     
     public static func getProducts(token:String) throws -> Array<Product>?{
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "ReadProducts")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "ReadProducts")
         let params = "token=\(token)"
         var products = Array<Product>()
         do{
-            var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            var response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
-                throw Error.noSessionFound
+                throw ProductError.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw Error.errorGettingProducts
+                throw ProductError.errorGettingProducts
             }
             if let json = response["Products"] as? Array<NSDictionary> {
                 for productJson in json {
@@ -39,12 +39,12 @@ public class Product {
             }
             
             return products
-        } catch HttpServerConnection.Error.connectionException {
-            throw Error.errorGettingProducts
+        } catch HttpServerConnection.HttpError.connectionException {
+            throw ProductError.errorGettingProducts
         }
     }
     
-    public enum Error: ErrorType{
+    public enum ProductError: Error{
         case noSessionFound
         case errorGettingProducts
     }

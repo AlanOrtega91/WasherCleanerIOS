@@ -23,10 +23,10 @@ public class User {
     public static let HTTP_LOCATION = "Cleaner/"
     
     public static func updateLocation(token:String, latitud:Double, longitud:Double) throws {
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "UpdateLocation")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "UpdateLocation")
         let params = "token=\(token)&latitud=\(latitud)&longitud=\(longitud)"
         do{
-            let response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            let response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
                 throw UserError.noSessionFound
             }
@@ -34,16 +34,16 @@ public class User {
                 throw UserError.errorUpdatingLocation
             }
             
-        } catch HttpServerConnection.Error.connectionException{
+        } catch HttpServerConnection.HttpError.connectionException{
             throw UserError.errorUpdatingLocation
         }
     }
     
     public static func saveFirebaseToken(token:String, pushNotificationToken:String) throws {
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "SavePushNotificationToken")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "SavePushNotificationToken")
         let params = "token=\(token)&pushNotificationToken=\(pushNotificationToken)"
         do{
-            let response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            let response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
                 throw UserError.noSessionFound
             }
@@ -51,34 +51,34 @@ public class User {
                 throw UserError.errorSavingFireBaseToken
             }
             
-        } catch HttpServerConnection.Error.connectionException{
+        } catch HttpServerConnection.HttpError.connectionException{
             throw UserError.errorSavingFireBaseToken
         }
     }
     
     
     public func sendLogout() throws {
-        let url = HttpServerConnection.buildURL(User.HTTP_LOCATION + "LogOut")
+        let url = HttpServerConnection.buildURL(location: User.HTTP_LOCATION + "LogOut")
         let params = "email=\(email)"
         do{
-            let response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            let response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             
             if response["Status"] as! String != "OK" {
                 throw UserError.errorWithLogOut
             }
             
-        } catch HttpServerConnection.Error.connectionException{
+        } catch HttpServerConnection.HttpError.connectionException{
             throw UserError.errorWithLogOut
         }
     }
     
     public static func getEncodedImageForUser(id:String) -> String {
         let url = NSURL(string: "http://imanio.zone/Vashen/images/cleaners/\(id)/profile_image.jpg")!
-        let imageData = NSData.init(contentsOfURL: url)
-        return imageData!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        let imageData = NSData.init(contentsOf: url as URL)
+        return imageData!.base64EncodedString(options: .lineLength64Characters)
     }
     
-    public enum UserError: ErrorType{
+    public enum UserError: Error{
         case noSessionFound
         case errorSavingFireBaseToken
         case errorUpdatingLocation

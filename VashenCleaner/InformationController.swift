@@ -24,10 +24,7 @@ class InformationController: UIViewController {
         serviceLabel.text = service?.service
         type.text = service?.type
     }
-    @IBAction func clickedClose(sender: AnyObject) {
-//        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map") as! MapController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
-        self.navigationController?.popViewControllerAnimated(true)
+    @IBAction func clickedClose(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }

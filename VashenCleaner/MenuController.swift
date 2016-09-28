@@ -29,13 +29,13 @@ class MenuController: UIViewController {
     func initView(){
         name.text = user.name + user.lastName
         rating.text = String(user.rating)
-        let imageData = NSData(base64EncodedString: user.encodedImage, options: .IgnoreUnknownCharacters)
-        image.image = UIImage(data: imageData!)
+        let imageData = Data(base64Encoded: user.encodedImage, options: .ignoreUnknownCharacters)
+        image.image = UIImage(data: imageData! as Data)
     }
     
 
     @IBAction func clickClose(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     
@@ -44,14 +44,14 @@ class MenuController: UIViewController {
             ProfileReader.delete()
             try user.sendLogout()
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
             self.navigationController?.setViewControllers([nextViewController], animated: true)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            _ = self.navigationController?.popToRootViewController(animated: true)
         } catch {
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
             self.navigationController?.setViewControllers([nextViewController], animated: true)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            _ = self.navigationController?.popToRootViewController(animated: true)
         }
     }
 

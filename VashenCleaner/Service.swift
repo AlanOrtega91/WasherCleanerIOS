@@ -16,8 +16,8 @@ public class Service {
     public var service:String!
     public var price:String!
     public var description:String!
-    public var startedTime:NSDate!
-    public var finalTime:NSDate!
+    public var startedTime:Date!
+    public var finalTime:Date!
     
     public var estimatedTime:String!
     
@@ -40,32 +40,32 @@ public class Service {
     
     
     public static func changeServiceStatus(idService:String, withToken token:String, withStatusId statusId:String)throws {
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "ChangeServiceStatus")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "ChangeServiceStatus")
         let params = "serviceId=\(idService)&statusId=\(statusId)&token=\(token)&cancelCode=0"
         do{
-            var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            var response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
-                throw Error.noSessionFound
+                throw ServiceError.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw Error.errorChangingStatusRequest
+                throw ServiceError.errorChangingStatusRequest
             }
 
-        } catch HttpServerConnection.Error.connectionException {
-            throw Error.errorChangingStatusRequest
+        } catch HttpServerConnection.HttpError.connectionException {
+            throw ServiceError.errorChangingStatusRequest
         }
     }
     
     public static func acceptService(idService:String, withToken token:String) throws -> Service{
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "AcceptService")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "AcceptService")
         let params = "serviceId=\(idService)&token=\(token)"
         do{
-            var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            var response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
-                throw Error.noSessionFound
+                throw ServiceError.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw Error.errorServiceTaken
+                throw ServiceError.errorServiceTaken
             }
             let json = response["service info"] as! NSDictionary
             let service = Service()
@@ -89,22 +89,22 @@ public class Service {
             service.type = json["Tipo"] as! String
             
             return service
-        } catch HttpServerConnection.Error.connectionException {
-            throw Error.errorServiceTaken
+        } catch HttpServerConnection.HttpError.connectionException {
+            throw ServiceError.errorServiceTaken
         }
     }
     
     public static func getServices(latitud:Double, longitud:Double, withToken token:String) throws -> Array<Service>{
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "GetNearbyServices")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "GetNearbyServices")
         let params = "latitud=\(latitud)&longitud=\(longitud)&token=\(token)"
         var services = Array<Service>()
         do{
-            var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            var response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
-                throw Error.noSessionFound
+                throw ServiceError.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw Error.errorServiceTaken
+                throw ServiceError.errorServiceTaken
             }
             if let json = response["services"] as? Array<NSDictionary> {
                 for serviceJson in json {
@@ -118,29 +118,29 @@ public class Service {
             }
             
             return services
-        } catch HttpServerConnection.Error.connectionException {
+        } catch HttpServerConnection.HttpError.connectionException {
             return services
         }
     }
     
     public static func cancelService(idService:String, withToken token:String) throws {
-        let url = HttpServerConnection.buildURL(HTTP_LOCATION + "ChangeServiceStatus")
+        let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "ChangeServiceStatus")
         let params = "serviceId=\(idService)&statusId=6&token=\(token)&cancelCode=\(2)"
         do{
-            var response = try HttpServerConnection.sendHttpRequestPost(url, withParams: params)
+            var response = try HttpServerConnection.sendHttpRequestPost(urlPath: url, withParams: params)
             if response["Status"] as! String == "SESSION ERROR" {
-                throw Error.noSessionFound
+                throw ServiceError.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw Error.errorCancelingRequest
+                throw ServiceError.errorCancelingRequest
             }
             
-        } catch HttpServerConnection.Error.connectionException {
-            throw Error.errorCancelingRequest
+        } catch HttpServerConnection.HttpError.connectionException {
+            throw ServiceError.errorCancelingRequest
         }
     }
     
-    enum Error: ErrorType {
+    enum ServiceError: Error {
         case noSessionFound
         case userBlock
         case errorChangingStatusRequest

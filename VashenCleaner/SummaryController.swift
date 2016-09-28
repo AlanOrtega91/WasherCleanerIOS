@@ -15,23 +15,20 @@ class SummaryController: UIViewController {
     
     var service:Service!
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidLoad() {
         initView()
     }
     
-    
     func initView(){
         if service != nil {
-            let format = NSDateFormatter()
+            let format = DateFormatter()
             format.dateFormat = "yyy-MM-dd HH:mm:ss"
-            date.text = format.stringFromDate(service.startedTime)
-            price.text = service.price
+            format.locale = Locale(identifier: "us")
+            date.text = format.string(from: service.startedTime)
+            price.text = "$ " + service.price
         }
     }
-    @IBAction func onClickContinue(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(true)
-//        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("map") as! MapController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
+    @IBAction func onClickContinue(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }

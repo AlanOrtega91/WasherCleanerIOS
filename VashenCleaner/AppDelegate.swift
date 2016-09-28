@@ -16,22 +16,25 @@ import FirebaseMessaging
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var findRequestsNearbyTimer:DispatchSourceTimer!
+    var services = [Service]()
+    var currentLocation: CLLocation!
 
-
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         GMSServices.provideAPIKey("AIzaSyAhJQS8DvKSEuu7CmGZrcqAcGKpYHnYaQA")
         FIRApp.configure()
-        let notificationType: UIUserNotificationType = [UIUserNotificationType.Alert,UIUserNotificationType.Badge,UIUserNotificationType.Sound]
-        let notificationSettings = UIUserNotificationSettings(forTypes: notificationType, categories: nil)
+        let notificationType: UIUserNotificationType = [UIUserNotificationType.alert,UIUserNotificationType.badge,UIUserNotificationType.sound]
+        let notificationSettings = UIUserNotificationSettings(types: notificationType, categories: nil)
         application.registerForRemoteNotifications()
         application.registerUserNotificationSettings(notificationSettings)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.tokenRefreshNotificaiton),
-                                                         name: kFIRInstanceIDTokenRefreshNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.tokenRefreshNotificaiton),
+                                                       name: NSNotification.Name.firInstanceIDTokenRefresh, object: nil)
         return true
     }
+
+
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
         print(userInfo)
         if let state = userInfo["state"] as? String{
             switch state {
@@ -39,20 +42,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if let rating = userInfo["rating"] as? String{
                     let user = DataBase.readUser()
                     user.rating = Double(rating)
-                    DataBase.saveUser(user)
+                    DataBase.saveUser(user: user)
                 }
                 break
             case "6":
                 print(userInfo["message"])
-                if userInfo["message"] as? String == "5" {
-                    sendPopUp("Canceled")
-                }
+                sendPopUp(message: "Canceled")
                 if let serviceJson = userInfo["serviceInfo"] as? String{
-                    let data = serviceJson.dataUsingEncoding(NSUTF8StringEncoding)
+                    let data = serviceJson.data(using: String.Encoding.utf8)
                     do {
-                        let service = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
+                        let service = try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
                         print(service)
-                        deleteService(service)
+                        deleteService(serviceJson: service)
                     } catch {}
                     
                     //TODO: check if notify or popup
@@ -68,28 +69,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func saveNewServiceState(serviceJson:NSDictionary){
         var services = DataBase.readServices()
         let id = serviceJson["id"] as! String
-        let i = services?.indexOf({$0.id == id})
-        let format = NSDateFormatter()
+        let i = services?.index(where: {$0.id == id})
+        let format = DateFormatter()
         format.dateFormat = "yyy-MM-dd HH:mm:ss"
+        format.locale = Locale(identifier: "us")
         if i == nil {
-            services?.append(addService(serviceJson))
+            services?.append(addService(jsonService: serviceJson))
         } else {
             
             let status = serviceJson["status"] as! String
             services![i!].status = status
             if status == "Canceled" {
-                sendPopUp("Canceled")
+                sendPopUp(message: "Canceled")
             }
             if let startedTime =  serviceJson["fechaEmpezado"] as? String{
-                services![i!].startedTime = format.dateFromString(startedTime)
+                services![i!].startedTime = format.date(from: startedTime) as Date!
             }
             if let finalTime = serviceJson["horaFinalEstimada"] as? String{
-                services![i!].finalTime = format.dateFromString(finalTime)
+                services![i!].finalTime = format.date(from: finalTime) as Date!
             }
         }
         
-        DataBase.saveServices(services!)
-        AppData.notifyNewData(true)
+        DataBase.saveServices(services: services!)
+        AppData.notifyNewData(newData: true)
     }
     
     func addService(jsonService: NSDictionary) -> Service{
@@ -104,13 +106,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         service.longitud = Double(jsonService["longitud"] as! String)
         service.clientName = jsonService["nombreCliente"] as! String
         service.clientCel = jsonService["celCliente"] as! String
-        let format = NSDateFormatter()
+        let format = DateFormatter()
         format.dateFormat = "yyy-MM-dd HH:mm:ss"
+        format.locale = Locale(identifier: "us")
         if let startedTime = jsonService["fechaEmpezado"] as? String {
-            service.startedTime = format.dateFromString(startedTime)
+            service.startedTime = format.date(from: startedTime) as Date!
         }
         if let finalTime = jsonService["horaFinalEstimada"] as? String {
-            service.finalTime = format.dateFromString(finalTime)
+            service.finalTime = format.date(from: finalTime) as Date!
         }
 
         return service
@@ -119,15 +122,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func deleteService(serviceJson:NSDictionary){
         var services = DataBase.readServices()
         let id = serviceJson["id"] as! String
-        let i = services?.indexOf({$0.id == id})
+        let i = services?.index(where: {$0.id == id})
         
-        services?.removeAtIndex(i!)
-        DataBase.saveServices(services!)
-        AppData.notifyNewData(true)
+        _ = services?.remove(at: i!)
+        DataBase.saveServices(services: services!)
+        AppData.notifyNewData(newData: true)
     }
     
     func sendPopUp(message:String){
-        AppData.saveMessage(message)
+        AppData.saveMessage(message: message)
     }
     
     func tokenRefreshNotificaiton(notification: NSNotification) {
@@ -135,13 +138,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("InstanceID token: \(refreshedToken)")
             // Connect to FCM since connection may have failed when attempted before having a token.
             connectToFcm()
+            if AppData.readToken() != "" {
+                sendTokenToServer(firebaseToken: refreshedToken)
+            }
         }
     }
     // [END refresh_token]
     
     // [START connect_to_fcm]
     func connectToFcm() {
-        FIRMessaging.messaging().connectWithCompletion { (error) in
+        FIRMessaging.messaging().connect { (error) in
             if (error != nil) {
                 print("Unable to connect with FCM. \(error)")
             } else {
@@ -150,31 +156,89 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        print(NSString(data: deviceToken, encoding: NSUTF8StringEncoding))
-        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.Unknown)
+    func sendTokenToServer(firebaseToken:String){
+        do {
+            try User.saveFirebaseToken(token: AppData.readToken(),pushNotificationToken: firebaseToken)
+        } catch {
+            print("Error saving firebase Token")
+        }
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print(NSString(data: deviceToken as Data, encoding: String.Encoding.utf8.rawValue))
+        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.unknown)
     }
 
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        if AppData.readToken() != "" {
+        let findRequestsNearbyQueue = DispatchQueue(label: "com.alan.nearbyRequests", qos: .background, attributes: .concurrent, autoreleaseFrequency: .inherit, target: nil)
+        findRequestsNearbyTimer = DispatchSource.makeTimerSource(flags: .strict, queue: findRequestsNearbyQueue)
+        findRequestsNearbyTimer.scheduleRepeating(deadline: .now(), interval: .seconds(5), leeway: .seconds(3))
+        findRequestsNearbyTimer.setEventHandler(handler: {
+            //TODO: check this
+            //self.updateCleanerLocation()
+            self.findRequestsNearby()
+        })
+        findRequestsNearbyTimer.resume()
+        } else {
+            if findRequestsNearbyTimer != nil {
+                findRequestsNearbyTimer.cancel()
+            }
+        }
+    }
+    
+//    func updateCleanerLocation(){
+//        if self.currentLocation != nil {
+//            do {
+//                try User.updateLocation(token: self.token, latitud: self.currentLocation.coordinate.latitude, longitud: self.currentLocation.coordinate.longitude)
+//            } catch User.UserError.noSessionFound{
+//                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+//                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
+//                DispatchQueue.main.async {
+//                    self.present(nextViewController, animated: true, completion: nil)
+//                }
+//            } catch {
+//                print("Error updating location")
+//            }
+//        }
+//    }
+    
+    func findRequestsNearby(){
+        let activeService = DataBase.getActiveService()
+        if activeService == nil && currentLocation != nil{
+            do {
+                let servicesAmount = services.count
+                let token = AppData.readToken()
+                services = try Service.getServices(latitud: currentLocation.coordinate.latitude, longitud: currentLocation.coordinate.longitude, withToken: token)
+                if servicesAmount == 0 && services.count > 0 {
+                    //SendAlert for services found
+                }
+            } catch {
+                print("Error getting services")
+            }
+        }
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        if findRequestsNearbyTimer != nil {
+            findRequestsNearbyTimer.cancel()
+        }
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
@@ -184,29 +248,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "alan.VashenCleaner" in the application's documents Application Support directory.
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1]
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls[urls.count-1] as NSURL
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("VashenCleaner", withExtension: "momd")!
-        return NSManagedObjectModel(contentsOfURL: modelURL)!
+        let modelURL = Bundle.main.url(forResource: "VashenCleaner", withExtension: "momd")!
+        return NSManagedObjectModel(contentsOf: modelURL)!
     }()
 
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
         // The persistent store coordinator for the application. This implementation creates and returns a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SingleViewCoreData.sqlite")
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("SingleViewCoreData.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
-            try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
         } catch {
             // Report any error we got.
             var dict = [String: AnyObject]()
-            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-            dict[NSLocalizedFailureReasonErrorKey] = failureReason
+            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data" as AnyObject?
+            dict[NSLocalizedFailureReasonErrorKey] = failureReason as AnyObject?
 
             dict[NSUnderlyingErrorKey] = error as NSError
             let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
@@ -222,7 +286,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var managedObjectContext: NSManagedObjectContext = {
         // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
         let coordinator = self.persistentStoreCoordinator
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
     }()

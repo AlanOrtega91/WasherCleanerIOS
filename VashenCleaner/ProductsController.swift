@@ -8,12 +8,12 @@
 
 import Foundation
 
-class ProductsController: UIViewController,UITableViewDataSource,UITableViewDelegate  {
+class ProductsController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate  {
     
     var token:String!
     var products = Array<Product>()
-    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var userIdText: UILabel!
+    @IBOutlet weak var collectionView: UICollectionView!
 
     override func viewDidLoad() {
         initValues()
@@ -27,52 +27,97 @@ class ProductsController: UIViewController,UITableViewDataSource,UITableViewDele
     
     func initView(){
         userIdText.text = "ID = " + DataBase.readUser().id
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
+        collectionView.dataSource = self
+        collectionView.delegate = self
     }
     
     func initThreads(){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-            // do some task
+        DispatchQueue.global().async {
             self.readProducts()
-        });
+        }
     }
     
     func readProducts(){
         do {
-            products = try Product.getProducts(token)!
-            dispatch_async(dispatch_get_main_queue(), {
-                self.tableView.reloadData()
-                
-            })
-        } catch Product.Error.noSessionFound{
+            products = try Product.getProducts(token: token)!
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        } catch Product.ProductError.noSessionFound{
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("main")
-            dispatch_async(dispatch_get_main_queue(), {
-                self.presentViewController(nextViewController, animated: true, completion: nil)
-            })
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
+            DispatchQueue.main.async {
+                _ = self.present(nextViewController, animated: true, completion: nil)
+            }
         } catch {
             
         }
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return products.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let product = self.products[indexPath.row]
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("productCell") as! ProductCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: "product_row", for: indexPath) as! ProductCell
+        let product = products[indexPath.row]
         cell.amount.text = product.cantidad + "%"
-        cell.brand.text = product.name
-        cell.productDescription.text = product.description
+        cell.name.text = product.name
+        checkForImage(cell: cell, forProduct: product)
         return cell
     }
     
-    @IBAction func clickedClose(sender: AnyObject) {
-//        let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("menu") as! MenuController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
-        self.navigationController?.popViewControllerAnimated(true)
+    func checkForImage(cell: ProductCell, forProduct product: Product){
+        var image:UIImage!
+        switch product.id {
+        case "1":
+            image = UIImage(named: "Product01")
+            cell.traditional.isHidden = true
+            cell.eco.isHidden = false
+            break
+        case "2":
+            image = UIImage(named: "Product02")
+            cell.traditional.isHidden = false
+            cell.eco.isHidden = true
+            break
+        case "3":
+            image = UIImage(named: "Product03")
+            cell.traditional.isHidden = false
+            cell.eco.isHidden = false
+            break
+        case "4":
+            image = UIImage(named: "Product03")
+            cell.traditional.isHidden = false
+            cell.eco.isHidden = false
+            break
+        case "5":
+            image = UIImage(named: "Product03")
+            cell.traditional.isHidden = false
+            cell.eco.isHidden = false
+            break
+        case "6":
+            image = UIImage(named: "Product03")
+            cell.traditional.isHidden = false
+            cell.eco.isHidden = false
+            break
+        case "7":
+            image = UIImage(named: "Product04")
+            cell.traditional.isHidden = false
+            cell.eco.isHidden = false
+            break
+        default:
+            break
+        }
+        cell.product.image = image
+    }
+    
+    
+    @IBAction func clickedClose(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }

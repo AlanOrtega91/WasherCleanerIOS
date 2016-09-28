@@ -12,9 +12,9 @@ class ForgotPasswordController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let backgroundImage = UIImageView(frame: UIScreen.mainScreen().bounds)
+        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
         backgroundImage.image = UIImage(named: "background")
-        self.view.insertSubview(backgroundImage, atIndex: 0)
+        self.view.insertSubview(backgroundImage, at: 0)
     }
 
     override func didReceiveMemoryWarning() {
@@ -22,15 +22,11 @@ class ForgotPasswordController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func clickedCancel(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(true)
-//        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("login") as! LoginController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
+    @IBAction func clickedCancel(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 
-    @IBAction func clickedRecover(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(true)
-//        let nextViewController = self.storyboard!.instantiateViewControllerWithIdentifier("login") as! LoginController
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
+    @IBAction func clickedRecover(_ sender: AnyObject) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }
