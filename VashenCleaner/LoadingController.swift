@@ -45,6 +45,12 @@ public class LoadingController: UIViewController {
         self.loading.startAnimating()
     }
     
+    public override func didReceiveMemoryWarning() {
+        self.loading.stopAnimating()
+        self.loading.animationImages = []
+        self.loading.image = UIImage(named: "frame_199_delay-0.04s")
+    }
+    
     func readProfile(){
         do{
             try ProfileReader.run(email: email, withPassword: password)

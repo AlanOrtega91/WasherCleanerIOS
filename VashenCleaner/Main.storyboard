@@ -19,10 +19,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading" translatesAutoresizingMaskIntoConstraints="NO" id="PIF-el-XVG"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="PIF-el-XVG"/>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="izv-dU-d1B">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="0Ia-GA-VwO"/>
+                                    <constraint firstAttribute="height" constant="40" id="0Ia-GA-VwO"/>
                                 </constraints>
                                 <state key="normal" title="INICIAR SESION" backgroundImage="button_image">
                                     <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -31,15 +31,22 @@
                                     <segue destination="wMh-a6-z2t" kind="show" id="mMS-ni-caG"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Washer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zm8-Ck-2FX">
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WASHER" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zm8-Ck-2FX">
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="50"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="DEB-je-cXK">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="t2K-wa-Bdv"/>
+                                    <constraint firstAttribute="height" constant="140" id="tpc-BK-boK"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="izv-dU-d1B" firstAttribute="leading" secondItem="Uhe-Jr-uVr" secondAttribute="leadingMargin" constant="5" id="2fe-ZH-b8F"/>
+                            <constraint firstItem="DEB-je-cXK" firstAttribute="centerY" secondItem="PIF-el-XVG" secondAttribute="centerY" constant="-100" id="7bi-JS-F66"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Zm8-Ck-2FX" secondAttribute="trailing" constant="5" id="F5p-C1-eEd"/>
                             <constraint firstItem="Zm8-Ck-2FX" firstAttribute="centerX" secondItem="Uhe-Jr-uVr" secondAttribute="centerX" id="Jfn-1M-rh1"/>
                             <constraint firstItem="Dgv-5e-Nh3" firstAttribute="top" secondItem="izv-dU-d1B" secondAttribute="bottom" constant="10" id="McL-rS-iiF"/>
@@ -48,7 +55,8 @@
                             <constraint firstItem="PIF-el-XVG" firstAttribute="top" secondItem="h00-rG-g9o" secondAttribute="bottom" id="YZF-L0-Fv4"/>
                             <constraint firstItem="Zm8-Ck-2FX" firstAttribute="leading" secondItem="Uhe-Jr-uVr" secondAttribute="leadingMargin" constant="5" id="Z0P-pY-Pcs"/>
                             <constraint firstItem="Dgv-5e-Nh3" firstAttribute="top" secondItem="PIF-el-XVG" secondAttribute="bottom" id="aZB-tJ-mQ7"/>
-                            <constraint firstItem="izv-dU-d1B" firstAttribute="top" secondItem="Zm8-Ck-2FX" secondAttribute="bottom" constant="50" id="w8u-wa-Yii"/>
+                            <constraint firstItem="Zm8-Ck-2FX" firstAttribute="top" secondItem="DEB-je-cXK" secondAttribute="bottom" constant="20" id="brd-dd-nje"/>
+                            <constraint firstItem="DEB-je-cXK" firstAttribute="centerX" secondItem="PIF-el-XVG" secondAttribute="centerX" id="gto-9H-TgB"/>
                             <constraint firstItem="izv-dU-d1B" firstAttribute="trailing" secondItem="Uhe-Jr-uVr" secondAttribute="trailingMargin" constant="5" id="yxB-uG-0cd"/>
                         </constraints>
                         <variation key="default">
@@ -68,7 +76,7 @@
         <scene sceneID="O9b-ce-7l0">
             <objects>
                 <navigationController navigationBarHidden="YES" id="dgh-DU-dAf" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="bXj-wq-Vzi">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bXj-wq-Vzi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -285,7 +293,7 @@
                                     <navigationItem title="OLVIDASTE TU CONSTRASEÑA" id="AjD-wx-VJy">
                                         <barButtonItem key="leftBarButtonItem" style="plain" id="aei-EP-Atg">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="dsa-mD-tXH">
-                                                <rect key="frame" x="16" y="7" width="78" height="30"/>
+                                                <rect key="frame" x="16" y="963" width="78" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <state key="normal" title="CANCELAR">
                                                     <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -341,6 +349,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Logo" width="372" height="246"/>
         <image name="background" width="318" height="567"/>
         <image name="button_image" width="599" height="88"/>
         <image name="loading" width="640" height="1136"/>

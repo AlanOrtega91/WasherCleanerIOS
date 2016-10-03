@@ -27,6 +27,8 @@ class MenuVC: UITableViewController {
         if user.encodedImage != nil {
             let dataDecoded = Data(base64Encoded: user.encodedImage, options: .ignoreUnknownCharacters)
             cell.userImage.image = UIImage(data: dataDecoded!)!
+        } else {
+            cell.userImage.image = UIImage(named: "default_image")
         }
         cell.userName.text = user.name + " " + user.lastName
         switch user.rating.rounded() {
