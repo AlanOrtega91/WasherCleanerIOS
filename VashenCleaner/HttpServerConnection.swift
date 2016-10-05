@@ -27,6 +27,7 @@ public class HttpServerConnection
             var response : URLResponse?
         
             let data = try NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
+
             let dataString = try JSONSerialization.jsonObject(with: data, options: [])
             return dataString as! Dictionary<String, AnyObject>
         } catch (let e) {

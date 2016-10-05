@@ -76,7 +76,7 @@
         <scene sceneID="O9b-ce-7l0">
             <objects>
                 <navigationController navigationBarHidden="YES" id="dgh-DU-dAf" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bXj-wq-Vzi">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="bXj-wq-Vzi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -177,11 +177,11 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="384-4u-quu"/>
                                 </constraints>
-                                <state key="normal" title="OLVIDASTE TU CONSTRASEÑA?" backgroundImage="button_image">
-                                    <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="¿OLVIDASTE TU CONSTRASEÑA?">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="qfm-fO-hcc" kind="show" id="iFM-tR-rpR"/>
+                                    <segue destination="qfm-fO-hcc" kind="show" id="k6o-Vz-Vjw"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -271,7 +271,7 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HzF-9d-l30">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="bGn-84-ek4"/>
+                                    <constraint firstAttribute="height" constant="40" id="bGn-84-ek4"/>
                                 </constraints>
                                 <state key="normal" title="RESTABLECER CONTRASENA" backgroundImage="button_image">
                                     <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -293,7 +293,7 @@
                                     <navigationItem title="OLVIDASTE TU CONSTRASEÑA" id="AjD-wx-VJy">
                                         <barButtonItem key="leftBarButtonItem" style="plain" id="aei-EP-Atg">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="dsa-mD-tXH">
-                                                <rect key="frame" x="16" y="963" width="78" height="30"/>
+                                                <rect key="frame" x="16" y="7" width="78" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <state key="normal" title="CANCELAR">
                                                     <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -326,11 +326,11 @@
                             <constraint firstItem="n2t-U5-fqW" firstAttribute="leading" secondItem="Xqi-WB-2lA" secondAttribute="leadingMargin" constant="-20" id="P6N-nh-qFY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="v2c-mb-5CU" secondAttribute="trailing" constant="5" id="Udb-ow-nfk"/>
                             <constraint firstItem="Eic-pQ-qes" firstAttribute="top" secondItem="n2t-U5-fqW" secondAttribute="bottom" id="VvM-IV-o7Q"/>
-                            <constraint firstItem="v2c-mb-5CU" firstAttribute="top" secondItem="A5K-Rd-zCJ" secondAttribute="bottom" constant="5" id="hO5-uu-djS"/>
+                            <constraint firstItem="v2c-mb-5CU" firstAttribute="top" secondItem="A5K-Rd-zCJ" secondAttribute="bottom" constant="20" id="hO5-uu-djS"/>
                             <constraint firstItem="n2t-U5-fqW" firstAttribute="top" secondItem="qdl-Yu-wwI" secondAttribute="bottom" id="ihV-VQ-pA9"/>
                             <constraint firstItem="qdl-Yu-wwI" firstAttribute="leading" secondItem="Xqi-WB-2lA" secondAttribute="leadingMargin" constant="-20" id="ihj-j1-2Tj"/>
                             <constraint firstItem="qdl-Yu-wwI" firstAttribute="top" secondItem="zsl-bp-bZQ" secondAttribute="bottom" id="k7K-Dd-Qp0"/>
-                            <constraint firstItem="HzF-9d-l30" firstAttribute="top" secondItem="v2c-mb-5CU" secondAttribute="bottom" constant="5" id="kko-jJ-fxE"/>
+                            <constraint firstItem="HzF-9d-l30" firstAttribute="top" secondItem="v2c-mb-5CU" secondAttribute="bottom" constant="20" id="kko-jJ-fxE"/>
                             <constraint firstItem="A5K-Rd-zCJ" firstAttribute="top" secondItem="qdl-Yu-wwI" secondAttribute="bottom" constant="15" id="nPk-tJ-n6m"/>
                             <constraint firstAttribute="trailingMargin" secondItem="A5K-Rd-zCJ" secondAttribute="trailing" constant="5" id="nWz-rZ-Yxl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="HzF-9d-l30" secondAttribute="trailing" constant="5" id="rhV-7T-DWK"/>

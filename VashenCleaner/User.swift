@@ -72,10 +72,14 @@ public class User {
         }
     }
     
-    public static func getEncodedImageForUser(id:String) -> String {
-        let url = NSURL(string: "http://imanio.zone/Vashen/images/cleaners/\(id)/profile_image.jpg")!
-        let imageData = NSData.init(contentsOf: url as URL)
-        return imageData!.base64EncodedString(options: .lineLength64Characters)
+    public static func getEncodedImageForUser(id:String) -> String? {
+        let url = URL(string: "http://imanio.zone/Vashen/images/cleaners/\(id)/profile_image.jpg")!
+        do {
+            let imageData = try Data.init(contentsOf: url)
+            return imageData.base64EncodedString(options: .lineLength64Characters)
+        } catch {
+            return nil
+        }
     }
     
     public enum UserError: Error{

@@ -7,15 +7,14 @@
 //
 
 import UIKit
-import GoogleMaps
+import MapKit
 
-class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelegate,SWRevealViewControllerDelegate {
+class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegate,SWRevealViewControllerDelegate {
 
     //Map
-    @IBOutlet weak var mapView: UIView!
-    var map: GMSMapView!
-    let serviceMarker = GMSMarker()
-    let locationMarker = GMSMarker()
+    @IBOutlet weak var mapViewIOS: MKMapView!
+    let serviceMarker = CustomServiceMarker()
+    let locationMarker = CustomCleanerMarker()
     var locManager = CLLocationManager()
     //Timers
     var clock:DispatchSourceTimer!
@@ -142,13 +141,13 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     func updateLocationMarker(){
         if self.currentLocation != nil {
             DispatchQueue.main.async {
-                self.locationMarker.position = CLLocationCoordinate2D(latitude: self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude)
+                self.locationMarker.coordinate = CLLocationCoordinate2D(latitude: self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude)
             }
         }
     }
     
     func configureStateLooking(){
-        serviceMarker.map = nil
+        self.mapViewIOS.removeAnnotation(serviceMarker)
         informationLayout.isHidden = true
         rightButton.isEnabled = false
         if services.count > 0 {
@@ -210,10 +209,10 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     
     func configureActiveServiceAccepted(display:String){
         DispatchQueue.main.async {
-            self.serviceMarker.map = self.map
+            self.mapViewIOS.addAnnotation(self.serviceMarker)
             self.rightButton.isEnabled = true
             if self.activeService != nil {
-                self.serviceMarker.position = CLLocationCoordinate2D(latitude: self.activeService.latitud, longitude: self.activeService.longitud)
+                self.serviceMarker.coordinate = CLLocationCoordinate2D(latitude: self.activeService.latitud, longitude: self.activeService.longitud)
             }
             self.statusDisplay.isUserInteractionEnabled = true
             self.statusDisplay.setTitle(display, for: .normal)
@@ -225,10 +224,10 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     
     func configureActiveServiceStarted(display:String){
         DispatchQueue.main.async {
-            self.serviceMarker.map = self.map
+            self.mapViewIOS.addAnnotation(self.serviceMarker)
             self.rightButton.isEnabled = true
             if self.activeService != nil {
-                self.serviceMarker.position = CLLocationCoordinate2D(latitude: self.activeService.latitud, longitude: self.activeService.longitud)
+                self.serviceMarker.coordinate = CLLocationCoordinate2D(latitude: self.activeService.latitud, longitude: self.activeService.longitud)
             }
             self.statusDisplay.isUserInteractionEnabled = true
             self.statusDisplay.setTitle(display, for: .normal)
@@ -270,9 +269,8 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
                 return
             }
             
-            if placemarks!.count > 0 {
-                let pm = placemarks![0] //as! CLPlacemark
-                //self.locationText.text = pm.thoroughfare! + " " + pm.subThoroughfare! + ", " + pm.subLocality! + ", " + pm.locality! + ", " + pm.administrativeArea! + ", " + pm.country!
+            if let pm = placemarks?[0] {
+                self.locationText.text = pm.thoroughfare! + " " + pm.subThoroughfare! + ", " + pm.subLocality! + ", " + pm.locality! + ", " + pm.administrativeArea! + ", " + pm.country!
                 print(self.locationText.text)
             }
             else {
@@ -430,49 +428,80 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     
     func revealController(_ revealController: SWRevealViewController!, didMoveTo position: FrontViewPosition) {
         if(position == .left) {
-            self.mapView.isUserInteractionEnabled = true;
+            self.mapViewIOS.isUserInteractionEnabled = true;
         } else {
-            self.mapView.isUserInteractionEnabled = false;
+            self.mapViewIOS.isUserInteractionEnabled = false;
         }
     }
     
     @IBAction func onClickTravel(_ sender: AnyObject) {
-        let url = URL(string: "comgooglemaps://?saddr=&daddr=\(activeService.latitud),\(activeService.longitud)&directionsmode=driving")!
-        UIApplication.shared.openURL(url)
+        let latitude:CLLocationDegrees =  activeService.latitud
+        let longitude:CLLocationDegrees =  activeService.longitud
+        let coordinates = CLLocationCoordinate2DMake(latitude, longitude)
+        let span = MKCoordinateSpanMake(0.02, 0.02)
+        let options = [
+            MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: coordinates),
+            MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: span)
+        ]
+        let placemark = MKPlacemark(coordinate: coordinates, addressDictionary: nil)
+        let mapItem = MKMapItem(placemark: placemark)
+        mapItem.name = "Servicio"
+        mapItem.openInMaps(launchOptions: options)
     }
     
     func initMap(){
-            var camera = GMSCameraPosition.camera(withLatitude: 0, longitude: 0, zoom: 15.0)
-            self.map = GMSMapView.map(withFrame: self.mapView.bounds, camera: camera)
-            self.map.delegate = self
-            self.map.isMyLocationEnabled = true
-            self.map.accessibilityElementsHidden = false
-            self.mapView.addSubview(self.map)
-            
-            if self.currentLocation != nil {
-                camera = GMSCameraPosition.camera(withLatitude: self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude, zoom: 15.0)
-            } else if self.map.myLocation != nil{
-                camera = GMSCameraPosition.camera(withLatitude: self.map.myLocation!.coordinate.latitude, longitude: self.map.myLocation!.coordinate.longitude, zoom: 15.0)
+        self.mapViewIOS.showsUserLocation = true
+        self.mapViewIOS.userTrackingMode = .follow
+        let span = MKCoordinateSpanMake(0.02, 0.02)
+        var location = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+        self.mapViewIOS.delegate = self
+        
+        if self.currentLocation != nil {
+            location = CLLocationCoordinate2D(latitude: self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude)
+        } else if self.mapViewIOS.userLocation.location != nil{
+            location = CLLocationCoordinate2D(latitude: (self.mapViewIOS.userLocation.location?.coordinate.latitude)!, longitude: (self.mapViewIOS.userLocation.location?.coordinate.longitude)!)
+        }
+        let region = MKCoordinateRegionMake(location, span)
+        mapViewIOS.setRegion(region, animated: true)
+        self.locationMarker.coordinate = location
+        mapViewIOS.addAnnotation(locationMarker)
+        
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if !(annotation is MKPointAnnotation) {
+            return nil
+        }
+        if annotation is CustomCleanerMarker {
+            var anView = mapView.dequeueReusableAnnotationView(withIdentifier: "washer")
+            if anView == nil {
+                anView = MKAnnotationView(annotation: annotation, reuseIdentifier: "washer")
             }
+            anView?.image = UIImage(named: "washer")
             
+            return anView
+        } else if annotation is CustomServiceMarker {
+            var anView = mapView.dequeueReusableAnnotationView(withIdentifier: "central")
+            if anView == nil {
+                anView = MKAnnotationView(annotation: annotation, reuseIdentifier: "central")
+            }
+            anView?.image = UIImage(named: "Location")
             
-            // Creates a marker in the center of the map.
-            self.locationMarker.position = CLLocationCoordinate2D(latitude: camera.target.latitude, longitude: camera.target.longitude)
-            self.locationMarker.map = self.map
-            self.locationMarker.icon = UIImage(named: "washer")
-            self.map.camera = camera
+            return anView
+        }
+        else {
+            return MKAnnotationView()
+        }
     }
     
     @IBAction func myLocationClicked(_ sender: AnyObject) {
-        var camera:GMSCameraPosition
+        var location = CLLocationCoordinate2D(latitude: 0, longitude: 0)
         if self.currentLocation != nil {
-            camera = GMSCameraPosition.camera(withLatitude: self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude, zoom: 15.0)
-        } else if self.map.myLocation != nil{
-            camera = GMSCameraPosition.camera(withLatitude: self.map.myLocation!.coordinate.latitude, longitude: self.map.myLocation!.coordinate.longitude, zoom: 15.0)
-        } else {
-            camera = GMSCameraPosition.camera(withLatitude: 0, longitude: 0, zoom: 15.0)
+            location = CLLocationCoordinate2D(latitude: self.currentLocation.coordinate.latitude, longitude: self.currentLocation.coordinate.longitude)
         }
-        self.map.animate(to: camera)
+        let span = MKCoordinateSpanMake(0.02, 0.02)
+        let region = MKCoordinateRegionMake(location, span)
+        self.mapViewIOS.setRegion(region, animated: true)
     }
     
     @IBAction func infoClick(_ sender: AnyObject) {
@@ -483,10 +512,17 @@ class MapController: UIViewController,GMSMapViewDelegate,CLLocationManagerDelega
     
     func createAlertInfo(message:String){
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    class CustomServiceMarker: MKPointAnnotation {
+        let image = UIImage(named: "default_marker")
+    }
+    class CustomCleanerMarker: MKPointAnnotation {
+        let image = UIImage(named: "washer")
     }
     
     enum MapError: Error{
