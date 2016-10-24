@@ -76,7 +76,7 @@
         <scene sceneID="O9b-ce-7l0">
             <objects>
                 <navigationController navigationBarHidden="YES" id="dgh-DU-dAf" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="bXj-wq-Vzi">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bXj-wq-Vzi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -291,7 +291,7 @@
                                 </textAttributes>
                                 <items>
                                     <navigationItem title="OLVIDASTE TU CONSTRASEÑA" id="AjD-wx-VJy">
-                                        <barButtonItem key="leftBarButtonItem" style="plain" id="aei-EP-Atg">
+                                        <barButtonItem key="leftBarButtonItem" id="aei-EP-Atg">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="dsa-mD-tXH">
                                                 <rect key="frame" x="16" y="7" width="78" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

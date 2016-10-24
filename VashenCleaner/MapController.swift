@@ -38,6 +38,10 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     @IBOutlet weak var locationText: UILabel!
     @IBOutlet weak var menuOpenButton: UIBarButtonItem!
     
+    var acceptSent = false
+    var cancelSent = false
+    var changingStatus = false
+    
     override func viewDidLoad() {
         menuOpenButton.target = self.revealViewController()
         menuOpenButton.action = #selector(SWRevealViewController.revealToggle(_:))
@@ -298,102 +302,129 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     
 
     @IBAction func onClickChangeStatus(_ sender: AnyObject) {
-        if activeService == nil {
+        if activeService == nil && !acceptSent{
             tryAcceptService()
-        } else if activeService.status == "Accepted" {
-            changeServiceStatus(status: Service.STARTED,statusString: "Started")
-        } else if activeService.status == "Started" {
-            changeServiceStatus(status: Service.FINISHED,statusString: "Finished")
+        } else if activeService.status == "Accepted" && !changingStatus {
+            changeServiceStatus(status: Service.STARTED,statusString: "Started", statusName: "Empezando...")
+        } else if activeService.status == "Started" && !changingStatus {
+            changeServiceStatus(status: Service.FINISHED,statusString: "Finished", statusName: "Terminando...")
         }
     }
     @IBAction func onClickCancel(_ sender: AnyObject) {
+        if !cancelSent {
         DispatchQueue.global().async {
             self.cancelService()
+        }
         }
     }
     
     func cancelService(){
         do {
+            cancelSent = true
             try Service.cancelService(idService: activeService.id, withToken: token)
             var auxServices = DataBase.readServices()
-            let index = auxServices?.index(where: {$0.id == activeService.id})
-            auxServices![index!].status = "Canceled"
-            auxServices?.remove(at: index!)
-            DataBase.saveServices(services: auxServices!)
-            AppData.saveIdService(id: activeService.id)
-            AppData.notifyNewData(newData: true)
-            AppData.saveMessage(message: "Canceled")
+            if activeService != nil {
+                if let index = auxServices?.index(where: {$0.id == activeService.id}) {
+                    auxServices![index].status = "Canceled"
+                    auxServices?.remove(at: index)
+                    DataBase.saveServices(services: auxServices!)
+                    AppData.saveIdService(id: activeService.id)
+                    AppData.saveMessage(message: "Canceled")
+                    AppData.notifyNewData(newData: true)
+                }
+            }
+            cancelSent = false
         } catch Service.ServiceError.noSessionFound {
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
             DispatchQueue.main.async {
                 self.present(nextViewController, animated: true, completion: nil)
             }
+            cancelSent = false
         } catch {
             createAlertInfo(message: "Error cancelando servicio")
             print("Error canceling service")
+            cancelSent = false
         }
     }
     
     func tryAcceptService(){
+        acceptSent = true
+        self.statusDisplay.setTitle("Aceptando...", for: .normal)
         DispatchQueue.global().async {
             for service in self.services {
                 do {
-                    let acceptedService = try Service.acceptService(idService: service.id, withToken: self.token)
-                    var auxServices = DataBase.readServices()
-                    auxServices?.append(acceptedService)
-                    DataBase.saveServices(services: auxServices!)
-                    DispatchQueue.main.async {
-                        self.statusDisplay.setTitle("Aceptando", for: .normal)
+                    if let acceptedService = try Service.acceptService(idService: service.id, withToken: self.token) {
+                        var auxServices = DataBase.readServices()
+                        auxServices?.append(acceptedService)
+                        DataBase.saveServices(services: auxServices!)
+                        AppData.saveIdService(id: acceptedService.id)
+                        AppData.notifyNewData(newData: true)
+                        self.startActiveServiceCycle()
+                        self.acceptSent = false
+                        return
                     }
-                    AppData.saveIdService(id: acceptedService.id)
-                    AppData.notifyNewData(newData: true)
-                    self.startActiveServiceCycle()
-                    return
                 } catch Service.ServiceError.noSessionFound{
                     let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                     let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
                     DispatchQueue.main.async {
                         self.present(nextViewController, animated: true, completion: nil)
                     }
-                } catch {
+                    self.acceptSent = false
+                    return
+                } catch Service.ServiceError.errorProducts {
                     self.createAlertInfo(message: "Error acceptando servicio...checha tus productos")
                     print("Error accepting service")
+                    self.acceptSent = false
+                    return
+                } catch {
+                    print("Error accepting service")
+                    self.acceptSent = false
                 }
             }
+            self.createAlertInfo(message: "Error acceptando servicio...checha tus productos")
+            print("Error accepting service")
+            self.acceptSent = false
         }
     }
     
-    func changeServiceStatus(status: Int, statusString:String){
-        do {
-            if lastStateSent != status {
-                lastStateSent = status
-                try Service.changeServiceStatus(idService: activeService.id, withToken: token, withStatusId: String(status))
-                var auxServices = DataBase.readServices()
-                let index = auxServices?.index(where: {$0.id == activeService.id})
-                auxServices![index!].status = statusString
-                if statusString == "Started" {
-                    let format = DateFormatter()
-                    format.dateFormat = "yyy-MM-dd HH:mm:ss"
-                    format.locale = Locale(identifier: "us")
-                    auxServices![index!].startedTime = Date()
-                    auxServices![index!].finalTime = Date().addingTimeInterval(Double(auxServices![index!].estimatedTime)! * 60)
+    func changeServiceStatus(status: Int, statusString:String, statusName:String){
+        self.statusDisplay.setTitle(statusName, for: .normal)
+        DispatchQueue.global().async {
+            do {
+                self.changingStatus = true
+                if self.lastStateSent != status {
+                    self.lastStateSent = status
+                    try Service.changeServiceStatus(idService: self.activeService.id, withToken: self.token, withStatusId: String(status))
+                    var auxServices = DataBase.readServices()
+                    let index = auxServices?.index(where: {$0.id == self.activeService.id})
+                    auxServices![index!].status = statusString
+                    if statusString == "Started" {
+                        let format = DateFormatter()
+                        format.dateFormat = "yyy-MM-dd HH:mm:ss"
+                        format.locale = Locale(identifier: "us")
+                        auxServices![index!].startedTime = Date()
+                        auxServices![index!].finalTime = Date().addingTimeInterval(Double(auxServices![index!].estimatedTime)! * 60)
+                    }
+                    DataBase.saveServices(services: auxServices!)
+                    AppData.saveIdService(id: self.activeService.id)
+                    AppData.notifyNewData(newData: true)
                 }
-                DataBase.saveServices(services: auxServices!)
-                AppData.saveIdService(id: activeService.id)
-                AppData.notifyNewData(newData: true)
+                self.changingStatus = false
+                
+            } catch Service.ServiceError.noSessionFound{
+                self.createAlertInfo(message: "Error con la session")
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
+                DispatchQueue.main.async {
+                    self.present(nextViewController, animated: true, completion: nil)
+                }
+                self.changingStatus = false
+            } catch {
+                self.createAlertInfo(message: "Error al cambiar el estado")
+                print("Error changing status")
+                self.changingStatus = false
             }
-            
-        } catch Service.ServiceError.noSessionFound{
-            createAlertInfo(message: "Error con la session")
-            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
-            DispatchQueue.main.async {
-                self.present(nextViewController, animated: true, completion: nil)
-            }
-        } catch {
-            createAlertInfo(message: "Error al cambiar el estado")
-            print("Error changing status")
         }
     }
     

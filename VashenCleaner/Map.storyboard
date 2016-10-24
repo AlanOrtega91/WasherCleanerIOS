@@ -543,9 +543,12 @@
                                 <sections/>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jhe-yA-he2">
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                </textAttributes>
                                 <items>
                                     <navigationItem title="HISTORIAL" id="1Jw-Fb-ZZ8">
-                                        <barButtonItem key="leftBarButtonItem" style="plain" id="v7n-2d-Dla">
+                                        <barButtonItem key="leftBarButtonItem" id="v7n-2d-Dla">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JNT-8v-dTg">
                                                 <rect key="frame" x="16" y="7" width="71" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -611,7 +614,7 @@
                                 </textAttributes>
                                 <items>
                                     <navigationItem title="Productos" id="c5R-e5-hZg">
-                                        <barButtonItem key="leftBarButtonItem" style="plain" id="MWd-QV-QoY">
+                                        <barButtonItem key="leftBarButtonItem" id="MWd-QV-QoY">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="66i-hI-gKz">
                                                 <rect key="frame" x="16" y="7" width="71" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

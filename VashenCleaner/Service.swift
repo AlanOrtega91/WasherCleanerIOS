@@ -56,7 +56,7 @@ public class Service {
         }
     }
     
-    public static func acceptService(idService:String, withToken token:String) throws -> Service{
+    public static func acceptService(idService:String, withToken token:String) throws -> Service?{
         let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "AcceptService")
         let params = "serviceId=\(idService)&token=\(token)"
         do{
@@ -65,7 +65,10 @@ public class Service {
                 throw ServiceError.noSessionFound
             }
             if response["Status"] as! String != "OK" {
-                throw ServiceError.errorServiceTaken
+                if response["Status"] as! String == "ERROR faltan productos" {
+                    throw ServiceError.errorProducts
+                }
+                return nil
             }
             let json = response["service info"] as! NSDictionary
             let service = Service()
@@ -146,6 +149,7 @@ public class Service {
         case errorChangingStatusRequest
         case errorServiceTaken
         case errorCancelingRequest
+        case errorProducts
     }
     
 }

@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreData
-import GoogleMaps
 import Firebase
 import FirebaseMessaging
 
@@ -18,10 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var findRequestsNearbyTimer:DispatchSourceTimer!
     var services = [Service]()
-    var currentLocation: CLLocation!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-        GMSServices.provideAPIKey("AIzaSyAhJQS8DvKSEuu7CmGZrcqAcGKpYHnYaQA")
         FIRApp.configure()
         let notificationType: UIUserNotificationType = [UIUserNotificationType.alert,UIUserNotificationType.badge,UIUserNotificationType.sound]
         let notificationSettings = UIUserNotificationSettings(types: notificationType, categories: nil)
@@ -122,11 +119,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func deleteService(serviceJson:NSDictionary){
         var services = DataBase.readServices()
         let id = serviceJson["id"] as! String
-        let i = services?.index(where: {$0.id == id})
-        
-        _ = services?.remove(at: i!)
-        DataBase.saveServices(services: services!)
-        AppData.notifyNewData(newData: true)
+        if let i = services?.index(where: {$0.id == id}) {
+            _ = services?.remove(at: i)
+            DataBase.saveServices(services: services!)
+            AppData.notifyNewData(newData: true)
+        }
     }
     
     func sendPopUp(message:String){
@@ -178,54 +175,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        if AppData.readToken() != "" {
-        let findRequestsNearbyQueue = DispatchQueue(label: "com.alan.nearbyRequests", qos: .background, attributes: .concurrent, autoreleaseFrequency: .inherit, target: nil)
-        findRequestsNearbyTimer = DispatchSource.makeTimerSource(flags: .strict, queue: findRequestsNearbyQueue)
-        findRequestsNearbyTimer.scheduleRepeating(deadline: .now(), interval: .seconds(5), leeway: .seconds(3))
-        findRequestsNearbyTimer.setEventHandler(handler: {
-            //TODO: check this
-            //self.updateCleanerLocation()
-            self.findRequestsNearby()
-        })
-        findRequestsNearbyTimer.resume()
-        } else {
-            if findRequestsNearbyTimer != nil {
-                findRequestsNearbyTimer.cancel()
-            }
-        }
     }
     
-//    func updateCleanerLocation(){
-//        if self.currentLocation != nil {
-//            do {
-//                try User.updateLocation(token: self.token, latitud: self.currentLocation.coordinate.latitude, longitud: self.currentLocation.coordinate.longitude)
-//            } catch User.UserError.noSessionFound{
-//                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-//                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
-//                DispatchQueue.main.async {
-//                    self.present(nextViewController, animated: true, completion: nil)
-//                }
-//            } catch {
-//                print("Error updating location")
-//            }
-//        }
-//    }
-    
-    func findRequestsNearby(){
-        let activeService = DataBase.getActiveService()
-        if activeService == nil && currentLocation != nil{
-            do {
-                let servicesAmount = services.count
-                let token = AppData.readToken()
-                services = try Service.getServices(latitud: currentLocation.coordinate.latitude, longitud: currentLocation.coordinate.longitude, withToken: token)
-                if servicesAmount == 0 && services.count > 0 {
-                    //SendAlert for services found
-                }
-            } catch {
-                print("Error getting services")
-            }
-        }
-    }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.

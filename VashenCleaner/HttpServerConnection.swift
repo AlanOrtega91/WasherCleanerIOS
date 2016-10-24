@@ -22,19 +22,26 @@ public class HttpServerConnection
         do {
             let request = NSMutableURLRequest.init(url: NSURL.init(string: urlPath)! as URL)
             request.httpMethod = "POST"
-            request.timeoutInterval = 10
+            request.timeoutInterval = 5
             request.httpBody = params.data(using: String.Encoding.utf8, allowLossyConversion: true)
-            var response : URLResponse?
-        
-            let data = try NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
-
-            let dataString = try JSONSerialization.jsonObject(with: data, options: [])
+            
+            let semaphore = DispatchSemaphore(value: 0)
+            var data:Data!
+            URLSession.shared.dataTask(with: request as URLRequest) { (responseData, _, _) -> Void in
+                data = responseData
+                semaphore.signal()
+                }.resume()
+            
+            _ = semaphore.wait(timeout: .distantFuture)
+            print(String(data: data, encoding: String.Encoding.utf8))
+            let dataString = try JSONSerialization.jsonObject(with: data, options: [.allowFragments])
             return dataString as! Dictionary<String, AnyObject>
         } catch (let e) {
             print(e)
             throw HttpError.connectionException
         }
     }
+    
     enum  HttpError: Error {
         case connectionException
     }
