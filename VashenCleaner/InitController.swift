@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseMessaging
+import AVFoundation
 
 class InitController: UIViewController {
     
@@ -16,37 +17,27 @@ class InitController: UIViewController {
     var token : String = ""
     var clickedAlertOK = false
 
-    @IBOutlet weak var loading: UIImageView!
+    @IBOutlet var videoView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        initView()
+        animateView()
         initValues()
         DispatchQueue.global().async {
             self.decideNextView()
         }
     }
     
-    func initView(){
-        var imgList = [UIImage]()
-        for countValue in 0...119{
-            let strImageName = "frame_\(countValue)_delay-0.04s"
-            let image = UIImage(named: strImageName)
-            if image != nil {
-                imgList.append(image!)
-            }
-        }
-        self.loading.animationImages = imgList
-        self.loading.animationDuration = 5.0
-        self.loading.startAnimating()
-        imgList.removeAll()
+    func animateView() {
+        let path = URL(fileURLWithPath: Bundle.main.path(forResource: "Splash", ofType: "mov")!)
+        let player = AVPlayer(url: path)
+        let newLayer = AVPlayerLayer(player: player)
+        newLayer.frame = self.videoView.frame
+        self.videoView.layer.addSublayer(newLayer)
+        newLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        player.play()
     }
     
-    public override func didReceiveMemoryWarning() {
-        self.loading.stopAnimating()
-        self.loading.animationImages = []
-        self.loading.image = UIImage(named: "frame_199_delay-0.04s")
-    }
     
     func initValues() {
         token = AppData.readToken()

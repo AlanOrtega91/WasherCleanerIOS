@@ -52,7 +52,6 @@ class MenuVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Map", bundle:nil)
-        //TODO: Add navigation controller
         switch TableArray[indexPath.row] {
         case TableArray[0]:
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "history") as! HistoryController

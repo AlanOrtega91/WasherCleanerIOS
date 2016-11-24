@@ -25,7 +25,8 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     var idClient:String!
     var services = Array<Service>()
     var token:String!
-    var activeServiceCycleThread:Thread!
+    var activeServiceCycleThread = DispatchQueue(label: "com.washer.activeServiceCycle", attributes: .concurrent)
+    var running = false
     var lastStateSent:Int = -1
     
     @IBOutlet weak var statusDisplay: UIButton!
@@ -60,7 +61,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     
     override func viewWillDisappear(_ animated: Bool) {
         cancelTimers()
-        print("cancel timers")
         self.locManager.stopUpdatingLocation()
     }
     
@@ -130,7 +130,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                     //SendAlert for services found
                 }
             } catch Service.ServiceError.noSessionFound{
-                //TODO: check errors
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
                 DispatchQueue.main.async {
@@ -166,12 +165,13 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     }
     
     func startActiveServiceCycle(){
-        if activeServiceCycleThread == nil {
-            activeServiceCycleThread = Thread(target: self, selector:#selector(activeServiceCycle), object: nil)
-            activeServiceCycleThread.start()
-        } else if !activeServiceCycleThread.isExecuting {
-            activeServiceCycleThread = Thread(target: self, selector:#selector(activeServiceCycle), object: nil)
-            activeServiceCycleThread.start()
+        //TODO: change to Dispatch
+        if !running {
+            activeServiceCycleThread.async {
+                self.running = true
+                self.activeServiceCycle()
+                self.running = false
+            }
         }
     }
     
@@ -196,7 +196,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
             clock = DispatchSource.makeTimerSource(flags: .strict, queue: clockQueue)
             clock.scheduleRepeating(deadline: .now(), interval: .seconds(1))
             clock.setEventHandler(handler: {
-                print("Modify Clock")
                 self.modifyClock()
             })
             clock.resume()
@@ -265,7 +264,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     func getGeoLocation(){
         let location = CLLocation(latitude: self.activeService.latitud, longitude: self.activeService.longitud)
         CLGeocoder().reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
-            //print(location)
+            print(location)
             
             if error != nil {
                 print("Reverse geocoder failed with error" + error!.localizedDescription)
@@ -273,9 +272,13 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                 return
             }
             
-            if let pm = placemarks?[0] {
-                self.locationText.text = pm.thoroughfare! + " " + pm.subThoroughfare! + ", " + pm.subLocality! + ", " + pm.locality! + ", " + pm.administrativeArea! + ", " + pm.country!
-                print(self.locationText.text)
+            if placemarks!.count > 0 {
+                let pm = placemarks![0]
+                DispatchQueue.main.async {
+                    if pm.thoroughfare != nil && pm.subThoroughfare != nil && pm.subLocality != nil && pm.locality != nil && pm.administrativeArea != nil {
+                        self.locationText.text = "\(pm.thoroughfare!) \(pm.subThoroughfare!), \(pm.subLocality!), \(pm.locality!), \(pm.administrativeArea!)"
+                    }
+                }
             }
             else {
                 print("Problem with the data received from geocoder")
@@ -343,7 +346,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
             cancelSent = false
         } catch {
             createAlertInfo(message: "Error cancelando servicio")
-            print("Error canceling service")
             cancelSent = false
         }
     }
@@ -374,16 +376,13 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                     return
                 } catch Service.ServiceError.errorProducts {
                     self.createAlertInfo(message: "Error acceptando servicio...checha tus productos")
-                    print("Error accepting service")
                     self.acceptSent = false
                     return
                 } catch {
-                    print("Error accepting service")
                     self.acceptSent = false
                 }
             }
             self.createAlertInfo(message: "Error acceptando servicio...checha tus productos")
-            print("Error accepting service")
             self.acceptSent = false
         }
     }
@@ -422,7 +421,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                 self.changingStatus = false
             } catch {
                 self.createAlertInfo(message: "Error al cambiar el estado")
-                print("Error changing status")
                 self.changingStatus = false
             }
         }
@@ -454,7 +452,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         locManager.stopUpdatingLocation()
-                print(error)
     }
     
     func revealController(_ revealController: SWRevealViewController!, didMoveTo position: FrontViewPosition) {

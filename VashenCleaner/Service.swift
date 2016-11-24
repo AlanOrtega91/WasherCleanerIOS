@@ -29,7 +29,6 @@ public class Service {
     public var id:String!
     public var address:String!
     public var plates:String!
-    public var model:String!
     public var brand:String!
     public var color:String!
     public var type:String!
@@ -86,7 +85,6 @@ public class Service {
             service.status = "Accepted"
             service.estimatedTime = json["tiempoEstimado"] as! String
             service.plates = json["Placas"] as! String
-            service.model = json["Modelo"] as! String
             service.brand = json["Marca"] as! String
             service.color = json["Color"] as! String
             service.type = json["Tipo"] as! String

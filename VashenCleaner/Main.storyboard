@@ -24,7 +24,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="0Ia-GA-VwO"/>
                                 </constraints>
-                                <state key="normal" title="INICIAR SESION" backgroundImage="button_image">
+                                <state key="normal" title="INICIAR SESIÓN" backgroundImage="button_image">
                                     <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
@@ -99,20 +99,11 @@
                     <view key="view" contentMode="scaleToFill" id="Eqn-8D-Mxq">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading" translatesAutoresizingMaskIntoConstraints="NO" id="c6g-m6-eLf"/>
-                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="c6g-m6-eLf" secondAttribute="trailing" constant="-20" id="VFC-wb-gp7"/>
-                            <constraint firstItem="c6g-m6-eLf" firstAttribute="top" secondItem="6LW-Zq-hjb" secondAttribute="bottom" id="ZEY-eY-Rxo"/>
-                            <constraint firstItem="vhs-Q9-oWi" firstAttribute="top" secondItem="c6g-m6-eLf" secondAttribute="bottom" id="fdv-vZ-NB8"/>
-                            <constraint firstItem="c6g-m6-eLf" firstAttribute="leading" secondItem="Eqn-8D-Mxq" secondAttribute="leadingMargin" constant="-20" id="yKD-G9-Tfy"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="O7F-Gg-WCn"/>
                     <connections>
-                        <outlet property="loading" destination="c6g-m6-eLf" id="nsb-6v-3QV"/>
+                        <outlet property="videoView" destination="Eqn-8D-Mxq" id="5Bb-4s-tTV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gnw-2J-Ggr" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -141,7 +132,7 @@
                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </textAttributes>
                                 <items>
-                                    <navigationItem title="INICIAR SESION" id="uVz-gz-zQ7">
+                                    <navigationItem title="INICIAR SESIÓN" id="uVz-gz-zQ7">
                                         <barButtonItem key="leftBarButtonItem" title="CANCELAR" id="h2Z-Jf-EmG">
                                             <color key="tintColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
@@ -157,7 +148,7 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="R7O-mZ-mHn">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="ejemplo@mail.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="R7O-mZ-mHn">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="b6a-CY-pNt"/>
                                 </constraints>
@@ -177,6 +168,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="384-4u-quu"/>
                                 </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <state key="normal" title="¿OLVIDASTE TU CONSTRASEÑA?">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
@@ -194,7 +186,7 @@
                             <constraint firstItem="R7O-mZ-mHn" firstAttribute="top" secondItem="E09-PH-nLU" secondAttribute="bottom" constant="15" id="Bz4-u0-d1I"/>
                             <constraint firstItem="oYc-cQ-l3X" firstAttribute="leading" secondItem="yFs-N9-bYK" secondAttribute="leadingMargin" id="Eli-yq-If2"/>
                             <constraint firstItem="E09-PH-nLU" firstAttribute="top" secondItem="yFs-N9-bYK" secondAttribute="topMargin" id="IFr-Pq-cF8"/>
-                            <constraint firstItem="q5G-6Q-eCN" firstAttribute="top" secondItem="R7O-mZ-mHn" secondAttribute="bottom" constant="5" id="Iov-o7-Pjt"/>
+                            <constraint firstItem="q5G-6Q-eCN" firstAttribute="top" secondItem="R7O-mZ-mHn" secondAttribute="bottom" constant="15" id="Iov-o7-Pjt"/>
                             <constraint firstItem="E09-PH-nLU" firstAttribute="top" secondItem="c7n-Wh-yhW" secondAttribute="bottom" id="JY7-d1-yo8"/>
                             <constraint firstItem="q5G-6Q-eCN" firstAttribute="leading" secondItem="yFs-N9-bYK" secondAttribute="leadingMargin" constant="5" id="MfJ-T2-xDc"/>
                             <constraint firstItem="oLk-pI-eHj" firstAttribute="top" secondItem="5nr-GB-6N1" secondAttribute="bottom" id="ZYr-My-dPc"/>
@@ -231,19 +223,10 @@
                     <view key="view" contentMode="scaleToFill" id="ZfZ-6k-lY2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kaD-hd-d7E"/>
-                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="kaD-hd-d7E" firstAttribute="top" secondItem="jLb-Sb-fE0" secondAttribute="bottom" id="1If-rq-wBT"/>
-                            <constraint firstItem="kaD-hd-d7E" firstAttribute="leading" secondItem="ZfZ-6k-lY2" secondAttribute="leadingMargin" constant="-20" id="ctm-yj-OR5"/>
-                            <constraint firstItem="u5J-y9-sVm" firstAttribute="top" secondItem="kaD-hd-d7E" secondAttribute="bottom" id="paj-I0-Ngz"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="kaD-hd-d7E" secondAttribute="trailing" constant="-20" id="xZl-9t-QbG"/>
-                        </constraints>
                     </view>
                     <connections>
-                        <outlet property="loading" destination="kaD-hd-d7E" id="iKc-Fg-P3T"/>
+                        <outlet property="videoView" destination="ZfZ-6k-lY2" id="7Jr-VL-trv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5PJ-VN-LTC" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -265,15 +248,19 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="n2t-U5-fqW"/>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="INTRODUZCA SU CORREO ELECTRONICO Y LE ENVIAREMOS UN ENLACE PARA RESTABLECER SU CONTRASEÑA" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A5K-Rd-zCJ">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="70" id="qGC-Pb-9bj"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HzF-9d-l30">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="bGn-84-ek4"/>
                                 </constraints>
-                                <state key="normal" title="RESTABLECER CONTRASENA" backgroundImage="button_image">
+                                <state key="normal" title="RESTABLECER CONTRASEÑA">
                                     <color key="titleColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
@@ -307,7 +294,7 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="v2c-mb-5CU">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="ejemplo@mail.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="v2c-mb-5CU">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="oEK-cv-ukw"/>
                                 </constraints>
@@ -352,6 +339,5 @@
         <image name="Logo" width="372" height="246"/>
         <image name="background" width="318" height="567"/>
         <image name="button_image" width="599" height="88"/>
-        <image name="loading" width="640" height="1136"/>
     </resources>
 </document>

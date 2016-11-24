@@ -10,17 +10,15 @@ import Foundation
 
 public class HttpServerConnection
 {
-    private static var dev = "192.168.0.9"
     private static var prod = "imanio.zone"
     
     public static func buildURL(location: String) -> String {
-        let path = ("http://" + prod + "/Vashen/API/" + location + "/")
-        return path
+        return ("http://" + prod + "/Vashen/API/" + location + "/")
     }
     
     public static func sendHttpRequestPost(urlPath: String, withParams params: String) throws -> Dictionary<String,AnyObject>{
         do {
-            let request = NSMutableURLRequest.init(url: NSURL.init(string: urlPath)! as URL)
+            let request = NSMutableURLRequest.init(url: URL.init(string: urlPath)!)
             request.httpMethod = "POST"
             request.timeoutInterval = 5
             request.httpBody = params.data(using: String.Encoding.utf8, allowLossyConversion: true)
@@ -31,13 +29,17 @@ public class HttpServerConnection
                 data = responseData
                 semaphore.signal()
                 }.resume()
-            
             _ = semaphore.wait(timeout: .distantFuture)
-            print(String(data: data, encoding: String.Encoding.utf8))
-            let dataString = try JSONSerialization.jsonObject(with: data, options: [.allowFragments])
-            return dataString as! Dictionary<String, AnyObject>
-        } catch (let e) {
-            print(e)
+            if data != nil {
+                let stringResponseUTF8 = String(data: data, encoding: .utf8)
+                print(stringResponseUTF8)
+                
+                let dataString = try JSONSerialization.jsonObject(with: data, options: [.allowFragments])
+                return dataString as! Dictionary<String, AnyObject>
+            } else {
+                throw HttpError.connectionException
+            }
+        } catch {
             throw HttpError.connectionException
         }
     }

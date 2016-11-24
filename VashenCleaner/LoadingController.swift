@@ -9,16 +9,18 @@
 import Foundation
 import Firebase
 import FirebaseMessaging
+import AVFoundation
 
 public class LoadingController: UIViewController {
-
+    
     var email: String!
     var password: String!
     var clickedAlertOK = false
-    @IBOutlet weak var loading: UIImageView!
+    
+    @IBOutlet var videoView: UIView!
     
     public override func viewDidLoad() {
-        initView()
+        animateView()
         FIRMessaging.messaging().connect(completion: { (error) in
             if (error != nil){
                 print("Unable to connect with FCM = \(error)")
@@ -31,24 +33,15 @@ public class LoadingController: UIViewController {
         }
     }
     
-    func initView(){
-        var imgList = [UIImage]()
-        for countValue in 0...119{
-            let strImageName = "frame_\(countValue)_delay-0.04s"
-            let image = UIImage(named: strImageName)
-            if image != nil {
-                imgList.append(image!)
-            }
-        }
-        self.loading.animationImages = imgList
-        self.loading.animationDuration = 5.0
-        self.loading.startAnimating()
-    }
     
-    public override func didReceiveMemoryWarning() {
-        self.loading.stopAnimating()
-        self.loading.animationImages = []
-        self.loading.image = UIImage(named: "frame_199_delay-0.04s")
+    func animateView() {
+        let path = URL(fileURLWithPath: Bundle.main.path(forResource: "Splash", ofType: "mov")!)
+        let player = AVPlayer(url: path)
+        let newLayer = AVPlayerLayer(player: player)
+        newLayer.frame = self.videoView.frame
+        self.videoView.layer.addSublayer(newLayer)
+        newLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        player.play()
     }
     
     func readProfile(){
@@ -85,10 +78,10 @@ public class LoadingController: UIViewController {
     }
     
     func createAlertInfo(message:String){
-            let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {action in
-                self.clickedAlertOK = true
-            }))
+        let alert = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {action in
+            self.clickedAlertOK = true
+        }))
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
         }

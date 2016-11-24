@@ -27,7 +27,6 @@ public class ProfileReader {
             DataBase.saveServices(services: profile.services)
             
         } catch{
-            print("Error reading profile")
             throw ProfileReaderError.errorReadingProfile
         }
     }
@@ -47,8 +46,7 @@ public class ProfileReader {
                 readUser(parameters: response["User Info"] as! NSDictionary, rating: 0)
             }
             readHistory(parameters: response["History"] as! Array<NSDictionary>)
-        } catch (let e) {
-            print(e)
+        } catch {
             throw ProfileReaderError.errorReadingData
         }
     }
@@ -61,7 +59,6 @@ public class ProfileReader {
             AppData.saveData(user: profile.user)
             DataBase.saveServices(services: profile.services)
         } catch{
-            print("Error reading profile")
             throw ProfileReaderError.errorReadingProfile
         }
     }
@@ -80,19 +77,18 @@ public class ProfileReader {
                 readUser(parameters: response["User Info"] as! NSDictionary, rating: 0)
             }
             readHistory(parameters: response["History"] as! Array<NSDictionary>)
-        } catch (let e) {
-            print(e)
+        } catch {
             throw ProfileReaderError.errorReadingData
         }
     }
     
     private func readUser(parameters: NSDictionary, rating:Double){
-        user.name = parameters["Nombre"]! as! String
-        user.lastName = parameters["PrimerApellido"]! as! String
-        user.email = parameters["Email"]! as! String
-        user.id = parameters["idLavador"]! as! String
-        user.token = parameters["Token"]! as! String
-        user.phone = parameters["Telefono"]! as! String
+        user.name = parameters["Nombre"]! as? String
+        user.lastName = parameters["PrimerApellido"]! as? String
+        user.email = parameters["Email"]! as? String
+        user.id = parameters["idLavador"]! as? String
+        user.token = parameters["Token"]! as? String
+        user.phone = parameters["Telefono"]! as? String
         user.encodedImage = User.getEncodedImageForUser(id: user.id)
         user.rating = rating
     }
@@ -114,7 +110,6 @@ public class ProfileReader {
             service.clientCel = serviceJSON["telCliente"] as? String
             service.estimatedTime = serviceJSON["tiempoEstimado"] as? String
             service.plates = serviceJSON["Placas"] as! String
-            service.model = serviceJSON["Modelo"] as! String
             service.brand = serviceJSON["Marca"] as! String
             service.color = serviceJSON["Color"] as! String
             service.type = serviceJSON["Tipo"] as! String

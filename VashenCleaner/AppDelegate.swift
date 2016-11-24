@@ -32,7 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        print(userInfo)
         if let state = userInfo["state"] as? String{
             switch state {
             case "-1":
@@ -43,17 +42,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 break
             case "6":
-                print(userInfo["message"])
                 sendPopUp(message: "Canceled")
                 if let serviceJson = userInfo["serviceInfo"] as? String{
                     let data = serviceJson.data(using: String.Encoding.utf8)
                     do {
                         let service = try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
-                        print(service)
                         deleteService(serviceJson: service)
                     } catch {}
-                    
-                    //TODO: check if notify or popup
                 }
                 break
             default:
@@ -132,7 +127,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func tokenRefreshNotificaiton(notification: NSNotification) {
         if let refreshedToken = FIRInstanceID.instanceID().token() {
-            print("InstanceID token: \(refreshedToken)")
             // Connect to FCM since connection may have failed when attempted before having a token.
             connectToFcm()
             if AppData.readToken() != "" {
@@ -162,7 +156,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print(NSString(data: deviceToken as Data, encoding: String.Encoding.utf8.rawValue))
         FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.unknown)
     }
 

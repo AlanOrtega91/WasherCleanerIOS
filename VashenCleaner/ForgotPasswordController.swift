@@ -9,18 +9,6 @@
 import UIKit
 
 class ForgotPasswordController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
-        backgroundImage.image = UIImage(named: "background")
-        self.view.insertSubview(backgroundImage, at: 0)
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction func clickedCancel(_ sender: AnyObject) {
         _ = self.navigationController?.popViewController(animated: true)

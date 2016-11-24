@@ -48,18 +48,20 @@ public class DataBase {
         fetchRequest.returnsObjectsAsFaults = false
         let user: User = User()
         do {
-            let results = try context.fetch(fetchRequest)[0] as! NSManagedObject
-            user.id = results.value(forKey: "id") as! String
-            user.name = results.value(forKey: "name") as! String
-            user.lastName = results.value(forKey: "lastName") as! String
-            user.email = results.value(forKey: "email") as! String
-            user.phone = results.value(forKey: "phone") as! String
-            user.encodedImage = results.value(forKey: "encodedImage") as! String
-            user.rating = results.value(forKey: "rating") as! Double
-            return user
+            if let results = try context.fetch(fetchRequest)[0] as? NSManagedObject {
+                user.id = results.value(forKey: "id") as? String
+                user.name = results.value(forKey: "name") as? String
+                user.lastName = results.value(forKey: "lastName") as? String
+                user.email = results.value(forKey: "email") as? String
+                user.phone = results.value(forKey: "phone") as? String
+                user.encodedImage = results.value(forKey: "encodedImage") as? String
+                user.rating = results.value(forKey: "rating") as? Double
+                return user
+            }
         } catch {
             return user
         }
+        return user
     }
     
     
@@ -86,7 +88,6 @@ public class DataBase {
                 newService.setValue(service.estimatedTime, forKey: "estimatedTime")
                 
                 newService.setValue(service.plates, forKey: "plates")
-                newService.setValue(service.model, forKey: "model")
                 newService.setValue(service.brand, forKey: "brand")
                 newService.setValue(service.color, forKey: "color")
                 newService.setValue(service.type, forKey: "type")
@@ -124,13 +125,6 @@ public class DataBase {
                 service.finalTime = serviceResult.value(forKey: "finalTime") as? Date
                 
                 service.plates = serviceResult.value(forKey: "plates") as! String
-                service.model = serviceResult.value(forKey: "model") as! String
-                service.brand = serviceResult.value(forKey: "brand") as! String
-                service.color = serviceResult.value(forKey: "color") as! String
-                service.type = serviceResult.value(forKey: "type") as! String
-                
-                service.plates = serviceResult.value(forKey: "plates") as! String
-                service.model = serviceResult.value(forKey: "model") as! String
                 service.brand = serviceResult.value(forKey: "brand") as! String
                 service.color = serviceResult.value(forKey: "color") as! String
                 service.type = serviceResult.value(forKey: "type") as! String
@@ -171,7 +165,6 @@ public class DataBase {
                 service.finalTime = results.value(forKey: "finalTime") as? Date
                 
                 service.plates = results.value(forKey: "plates") as! String
-                service.model = results.value(forKey: "model") as! String
                 service.brand = results.value(forKey: "brand") as! String
                 service.color = results.value(forKey: "color") as! String
                 service.type = results.value(forKey: "type") as! String
@@ -210,7 +203,6 @@ public class DataBase {
                 service.estimatedTime = serviceResult.value(forKey: "estimatedTime") as! String
                 service.finalTime = serviceResult.value(forKey: "finalTime") as! Date
                 service.plates = serviceResult.value(forKey: "plates") as! String
-                service.model = serviceResult.value(forKey: "model") as! String
                 service.brand = serviceResult.value(forKey: "brand") as! String
                 service.color = serviceResult.value(forKey: "color") as! String
                 service.type = serviceResult.value(forKey: "type") as! String

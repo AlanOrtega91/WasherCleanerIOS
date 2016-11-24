@@ -14,7 +14,6 @@
 		E714101E1D6CEF7A00C97798 /* InformationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714101D1D6CEF7A00C97798 /* InformationController.swift */; };
 		E714A62E1D682715008DE774 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A62D1D682715008DE774 /* AppDelegate.swift */; };
 		E714A6301D682715008DE774 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A62F1D682715008DE774 /* ViewController.swift */; };
-		E714A6331D682715008DE774 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E714A6311D682715008DE774 /* Main.storyboard */; };
 		E714A6361D682715008DE774 /* VashenCleaner.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */; };
 		E714A6381D682715008DE774 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E714A6371D682715008DE774 /* Assets.xcassets */; };
 		E714A63B1D682715008DE774 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E714A6391D682715008DE774 /* LaunchScreen.storyboard */; };
@@ -39,6 +38,7 @@
 		E7153DF31D90A51A00F169B9 /* ProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7153DF21D90A51A00F169B9 /* ProductCell.swift */; };
 		E72C5E731DA569B80069AE94 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E72C5E721DA569B80069AE94 /* MapKit.framework */; };
 		E73F566A1D86F82B00829AA8 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E73F56691D86F82B00829AA8 /* SWRevealViewController.m */; };
+		E79C8A761DCD166600846CA3 /* Splash.mov in Resources */ = {isa = PBXBuildFile; fileRef = E79C8A751DCD166600846CA3 /* Splash.mov */; };
 		E7F0FAAA1D884A8B002CDD44 /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F0FAA91D884A8B002CDD44 /* MenuVC.swift */; };
 		E7F0FAAC1D8850CA002CDD44 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F0FAAB1D8850CA002CDD44 /* MenuCell.swift */; };
 		E7F0FAAE1D8850D2002CDD44 /* HeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F0FAAD1D8850D2002CDD44 /* HeaderCell.swift */; };
@@ -81,6 +81,7 @@
 		E72C5E721DA569B80069AE94 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		E73F56681D86F82B00829AA8 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		E73F56691D86F82B00829AA8 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		E79C8A751DCD166600846CA3 /* Splash.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = Splash.mov; sourceTree = "<group>"; };
 		E7F0FAA91D884A8B002CDD44 /* MenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
 		E7F0FAAB1D8850CA002CDD44 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		E7F0FAAD1D8850D2002CDD44 /* HeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderCell.swift; sourceTree = "<group>"; };
@@ -156,6 +157,7 @@
 		E714A6431D6828E5008DE774 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
+				E79C8A751DCD166600846CA3 /* Splash.mov */,
 				E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */,
 				E714A6421D6828E1008DE774 /* VashenCleaner-Bridging-Header.h */,
 				E73F56681D86F82B00829AA8 /* SWRevealViewController.h */,
@@ -289,9 +291,9 @@
 				E714A63B1D682715008DE774 /* LaunchScreen.storyboard in Resources */,
 				E714A65E1D682D23008DE774 /* Main.storyboard in Resources */,
 				E714A6381D682715008DE774 /* Assets.xcassets in Resources */,
-				E714A6331D682715008DE774 /* Main.storyboard in Resources */,
 				E714A65F1D682D23008DE774 /* Map.storyboard in Resources */,
 				E71410181D6CAF1D00C97798 /* GoogleService-Info.plist in Resources */,
+				E79C8A761DCD166600846CA3 /* Splash.mov in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

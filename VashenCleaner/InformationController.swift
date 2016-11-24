@@ -13,16 +13,19 @@ class InformationController: UIViewController {
     @IBOutlet weak var clientName: UILabel!
     @IBOutlet weak var clientCel: UILabel!
     @IBOutlet weak var plates: UILabel!
+    @IBOutlet weak var brand: UILabel!
+    @IBOutlet weak var color: UILabel!
     @IBOutlet weak var serviceLabel: UILabel!
-    @IBOutlet weak var type: UILabel!
+
     
     override func viewDidLoad() {
         let service = DataBase.getActiveService()
         clientName.text = service?.clientName
         clientCel.text = service?.clientCel
         plates.text = service?.plates
+        brand.text = service?.brand
+        color.text = service?.color
         serviceLabel.text = service?.service
-        type.text = service?.type
     }
     @IBAction func clickedClose(_ sender: AnyObject) {
         _ = self.navigationController?.popViewController(animated: true)
