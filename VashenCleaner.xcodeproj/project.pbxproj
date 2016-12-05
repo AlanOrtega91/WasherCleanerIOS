@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B298B4546BE959867F31FFF6 /* libPods-VashenCleaner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EF2067F26EBE9B5122104EEF /* libPods-VashenCleaner.a */; };
-		E71410181D6CAF1D00C97798 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E71410171D6CAF1D00C97798 /* GoogleService-Info.plist */; };
 		E714101A1D6CC73C00C97798 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71410191D6CC73C00C97798 /* MenuController.swift */; };
 		E714101C1D6CD21700C97798 /* ProductsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714101B1D6CD21700C97798 /* ProductsController.swift */; };
 		E714101E1D6CEF7A00C97798 /* InformationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714101D1D6CEF7A00C97798 /* InformationController.swift */; };
@@ -45,7 +43,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E71410171D6CAF1D00C97798 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E71410191D6CC73C00C97798 /* MenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		E714101B1D6CD21700C97798 /* ProductsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductsController.swift; sourceTree = "<group>"; };
 		E714101D1D6CEF7A00C97798 /* InformationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationController.swift; sourceTree = "<group>"; };
@@ -85,9 +82,6 @@
 		E7F0FAA91D884A8B002CDD44 /* MenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
 		E7F0FAAB1D8850CA002CDD44 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		E7F0FAAD1D8850D2002CDD44 /* HeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderCell.swift; sourceTree = "<group>"; };
-		EEA905F35348FA86BC82DAA6 /* Pods-VashenCleaner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VashenCleaner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner.debug.xcconfig"; sourceTree = "<group>"; };
-		EF2067F26EBE9B5122104EEF /* libPods-VashenCleaner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VashenCleaner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F37183D8C86C2987D828079F /* Pods-VashenCleaner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VashenCleaner.release.xcconfig"; path = "Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +90,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E72C5E731DA569B80069AE94 /* MapKit.framework in Frameworks */,
-				B298B4546BE959867F31FFF6 /* libPods-VashenCleaner.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,18 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				E72C5E721DA569B80069AE94 /* MapKit.framework */,
-				EF2067F26EBE9B5122104EEF /* libPods-VashenCleaner.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		C5143B55A0561282F06BA04A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				EEA905F35348FA86BC82DAA6 /* Pods-VashenCleaner.debug.xcconfig */,
-				F37183D8C86C2987D828079F /* Pods-VashenCleaner.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		E714A6211D682715008DE774 = {
@@ -127,7 +110,6 @@
 				E714A62C1D682715008DE774 /* VashenCleaner */,
 				E714A62B1D682715008DE774 /* Products */,
 				71ACAE68D0FC75FB705F9035 /* Frameworks */,
-				C5143B55A0561282F06BA04A /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -158,14 +140,12 @@
 			isa = PBXGroup;
 			children = (
 				E79C8A751DCD166600846CA3 /* Splash.mov */,
-				E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */,
 				E714A6421D6828E1008DE774 /* VashenCleaner-Bridging-Header.h */,
 				E73F56681D86F82B00829AA8 /* SWRevealViewController.h */,
 				E73F56691D86F82B00829AA8 /* SWRevealViewController.m */,
 				E714A62D1D682715008DE774 /* AppDelegate.swift */,
 				E714A63C1D682715008DE774 /* Info.plist */,
 				E714A6371D682715008DE774 /* Assets.xcassets */,
-				E71410171D6CAF1D00C97798 /* GoogleService-Info.plist */,
 			);
 			name = "Support Files";
 			sourceTree = "<group>";
@@ -180,6 +160,7 @@
 				E714A6471D682D08008DE774 /* ProfileReader.swift */,
 				E714A6491D682D08008DE774 /* Service.swift */,
 				E714A6461D682D08008DE774 /* User.swift */,
+				E714A6341D682715008DE774 /* VashenCleaner.xcdatamodeld */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -292,7 +273,6 @@
 				E714A65E1D682D23008DE774 /* Main.storyboard in Resources */,
 				E714A6381D682715008DE774 /* Assets.xcassets in Resources */,
 				E714A65F1D682D23008DE774 /* Map.storyboard in Resources */,
-				E71410181D6CAF1D00C97798 /* GoogleService-Info.plist in Resources */,
 				E79C8A761DCD166600846CA3 /* Splash.mov in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,7 +292,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner-frameworks.sh\"\n";
+			shellScript = "
+";
 			showEnvVarsInLog = 0;
 		};
 		5AF8F233B1096177F6A94382 /* [CP] Copy Pods Resources */ = {
@@ -327,7 +308,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner-resources.sh\"\n";
+			shellScript = "
+";
 			showEnvVarsInLog = 0;
 		};
 		C74C7C735C49FB44A8685E59 /* [CP] Check Pods Manifest.lock */ = {
@@ -342,7 +324,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -495,7 +477,6 @@
 		};
 		E714A6401D682715008DE774 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EEA905F35348FA86BC82DAA6 /* Pods-VashenCleaner.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VashenCleaner/VashenCleaner.entitlements;
@@ -517,7 +498,6 @@
 		};
 		E714A6411D682715008DE774 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F37183D8C86C2987D828079F /* Pods-VashenCleaner.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VashenCleaner/VashenCleaner.entitlements;

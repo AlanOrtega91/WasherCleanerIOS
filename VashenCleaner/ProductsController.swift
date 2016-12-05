@@ -14,6 +14,7 @@ class ProductsController: UIViewController,UICollectionViewDataSource,UICollecti
     var products = Array<Product>()
     @IBOutlet weak var userIdText: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
+    let user = DataBase.readUser()
 
     override func viewDidLoad() {
         initValues()
@@ -26,7 +27,9 @@ class ProductsController: UIViewController,UICollectionViewDataSource,UICollecti
     }
     
     func initView(){
-        userIdText.text = "ID = " + DataBase.readUser().id
+        if let id = user?.id {
+            userIdText.text = "ID = " + id
+        }
         collectionView.dataSource = self
         collectionView.delegate = self
     }

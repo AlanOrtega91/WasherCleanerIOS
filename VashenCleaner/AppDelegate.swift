@@ -8,8 +8,6 @@
 
 import UIKit
 import CoreData
-import Firebase
-import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,13 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var services = [Service]()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-        FIRApp.configure()
-        let notificationType: UIUserNotificationType = [UIUserNotificationType.alert,UIUserNotificationType.badge,UIUserNotificationType.sound]
-        let notificationSettings = UIUserNotificationSettings(types: notificationType, categories: nil)
+        //TODO APNS
+        let notificationTypes: UIUserNotificationType = [UIUserNotificationType.alert, UIUserNotificationType.badge, UIUserNotificationType.sound]
+        let pushNotificationSettings = UIUserNotificationSettings(types: notificationTypes, categories: nil)
+        application.registerUserNotificationSettings(pushNotificationSettings)
         application.registerForRemoteNotifications()
-        application.registerUserNotificationSettings(notificationSettings)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.tokenRefreshNotificaiton),
-                                                       name: NSNotification.Name.firInstanceIDTokenRefresh, object: nil)
+        
         return true
     }
 
@@ -36,9 +33,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             switch state {
             case "-1":
                 if let rating = userInfo["rating"] as? String{
-                    let user = DataBase.readUser()
-                    user.rating = Double(rating)
-                    DataBase.saveUser(user: user)
+                    if let user = DataBase.readUser() {
+                        user.score = Int16(Int((Double(rating)?.rounded())!))
+                    }
                 }
                 break
             case "6":
@@ -59,43 +56,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func saveNewServiceState(serviceJson:NSDictionary){
-        var services = DataBase.readServices()
         let id = serviceJson["id"] as! String
-        let i = services?.index(where: {$0.id == id})
         let format = DateFormatter()
         format.dateFormat = "yyy-MM-dd HH:mm:ss"
         format.locale = Locale(identifier: "us")
-        if i == nil {
-            services?.append(addService(jsonService: serviceJson))
-        } else {
-            
+        if let service = DataBase.readService(id: id) {
             let status = serviceJson["status"] as! String
-            services![i!].status = status
+            service.status = status
             if status == "Canceled" {
                 sendPopUp(message: "Canceled")
             }
             if let startedTime =  serviceJson["fechaEmpezado"] as? String{
-                services![i!].startedTime = format.date(from: startedTime) as Date!
+                service.startedTime = format.date(from: startedTime) as Date!
             }
             if let finalTime = serviceJson["horaFinalEstimada"] as? String{
-                services![i!].finalTime = format.date(from: finalTime) as Date!
+                service.finalTime = format.date(from: finalTime) as Date!
             }
+        } else {
+            addService(jsonService: serviceJson)
         }
-        
-        DataBase.saveServices(services: services!)
         AppData.notifyNewData(newData: true)
     }
     
-    func addService(jsonService: NSDictionary) -> Service{
-        let service = Service()
+    func addService(jsonService: NSDictionary){
+        let service = Service.newService()
         service.id = jsonService["id"] as! String
         service.car = jsonService["coche"] as! String
         service.status = jsonService["status"] as! String
         service.service = jsonService["servicio"] as! String
         service.price = jsonService["precio"] as! String
-        service.description = jsonService["descripcion"] as! String
-        service.latitud = Double(jsonService["latitud"] as! String)
-        service.longitud = Double(jsonService["longitud"] as! String)
+        service.serviceDescription = jsonService["descripcion"] as! String
+        service.latitud = Double(jsonService["latitud"] as! String)!
+        service.longitud = Double(jsonService["longitud"] as! String)!
         service.clientName = jsonService["nombreCliente"] as! String
         service.clientCel = jsonService["celCliente"] as! String
         let format = DateFormatter()
@@ -107,18 +99,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let finalTime = jsonService["horaFinalEstimada"] as? String {
             service.finalTime = format.date(from: finalTime) as Date!
         }
-
-        return service
     }
     
     func deleteService(serviceJson:NSDictionary){
-        var services = DataBase.readServices()
         let id = serviceJson["id"] as! String
-        if let i = services?.index(where: {$0.id == id}) {
-            _ = services?.remove(at: i)
-            DataBase.saveServices(services: services!)
-            AppData.notifyNewData(newData: true)
-        }
+        let service = DataBase.readService(id: id)
+        DataBase.deleteService(service: service!)
+        AppData.notifyNewData(newData: true)
     }
     
     func sendPopUp(message:String){
@@ -126,26 +113,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func tokenRefreshNotificaiton(notification: NSNotification) {
-        if let refreshedToken = FIRInstanceID.instanceID().token() {
-            // Connect to FCM since connection may have failed when attempted before having a token.
-            connectToFcm()
-            if AppData.readToken() != "" {
-                sendTokenToServer(firebaseToken: refreshedToken)
-            }
-        }
+        //TODO: Implement APNS Token
+//        if let refreshedToken = FIRInstanceID.instanceID().token() {
+//            // Connect to FCM since connection may have failed when attempted before having a token.
+//            connectToFcm()
+//            if AppData.readToken() != "" {
+//                sendTokenToServer(firebaseToken: refreshedToken)
+//            }
+//        }
     }
     // [END refresh_token]
-    
-    // [START connect_to_fcm]
-    func connectToFcm() {
-        FIRMessaging.messaging().connect { (error) in
-            if (error != nil) {
-                print("Unable to connect with FCM. \(error)")
-            } else {
-                print("Connected to FCM.")
-            }
-        }
-    }
     
     func sendTokenToServer(firebaseToken:String){
         do {
@@ -156,7 +133,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.unknown)
     }
 
 

@@ -7,36 +7,41 @@
 //
 
 import Foundation
+import CoreData
 
-public class Service {
+@objc(Service)
+public class Service:NSManagedObject {
     
     static var HTTP_LOCATION = "Service/"
-    public var status:String!
-    public var car:String!
-    public var service:String!
-    public var price:String!
-    public var description:String!
-    public var startedTime:Date!
-    public var finalTime:Date!
     
-    public var estimatedTime:String!
+    @NSManaged var status:String
+    @NSManaged var car:String
+    @NSManaged var service:String
+    @NSManaged var price:String
+    @NSManaged var startedTime:Date
+    @NSManaged var finalTime:Date
+    @NSManaged var serviceDescription:String
+    @NSManaged var estimatedTime:String
     
-    public var latitud:Double!
-    public var longitud:Double!
+    @NSManaged var latitud:Double
+    @NSManaged var longitud:Double
     
-    public var clientName:String!
-    public var clientCel:String!
-    public var id:String!
-    public var address:String!
-    public var plates:String!
-    public var brand:String!
-    public var color:String!
-    public var type:String!
+    @NSManaged var clientName:String
+    @NSManaged var clientCel:String
+    @NSManaged var id:String
+    @NSManaged var address:String
+    @NSManaged var plates:String
+    @NSManaged var brand:String
+    @NSManaged var color:String
+    @NSManaged var type:String
     
     public static let STARTED = 4
     public static let FINISHED = 5
 
-    
+    public static func newService()->Service{
+        
+        return DataBase.newService()
+    }
     
     public static func changeServiceStatus(idService:String, withToken token:String, withStatusId statusId:String)throws {
         let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "ChangeServiceStatus")
@@ -70,18 +75,17 @@ public class Service {
                 return nil
             }
             let json = response["service info"] as! NSDictionary
-            let service = Service()
+            let service = Service.newService()
             
             service.id = json["id"] as! String
             service.car = json["coche"] as! String
             service.service = json["servicio"] as! String
             service.price = json["precio"] as! String
-            service.description = json["descripcion"] as! String
             
             service.latitud = Double(json["latitud"] as! String)!
             service.longitud = Double(json["longitud"] as! String)!
-            service.clientName = json["nombreCliente"] as? String
-            service.clientCel = json["telCliente"] as? String
+            service.clientName = json["nombreCliente"] as! String
+            service.clientCel = json["telCliente"] as! String
             service.status = "Accepted"
             service.estimatedTime = json["tiempoEstimado"] as! String
             service.plates = json["Placas"] as! String
@@ -109,7 +113,7 @@ public class Service {
             }
             if let json = response["services"] as? Array<NSDictionary> {
                 for serviceJson in json {
-                    let service = Service()
+                    let service = Service.newService()
                     service.id = serviceJson["idServicioPedido"] as! String
                     service.address = serviceJson["Direccion"] as! String
                     service.latitud = Double(serviceJson["Latitud"] as! String)!

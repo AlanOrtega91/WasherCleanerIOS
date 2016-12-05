@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import Firebase
-import FirebaseMessaging
 import AVFoundation
 
 public class LoadingController: UIViewController {
@@ -21,13 +19,6 @@ public class LoadingController: UIViewController {
     
     public override func viewDidLoad() {
         animateView()
-        FIRMessaging.messaging().connect(completion: { (error) in
-            if (error != nil){
-                print("Unable to connect with FCM = \(error)")
-            } else {
-                print("Connected to FCM")
-            }
-        })
         DispatchQueue.global().async {
             self.readProfile()
         }
@@ -48,9 +39,10 @@ public class LoadingController: UIViewController {
         do{
             try ProfileReader.run(email: email, withPassword: password)
             let token = AppData.readToken()
-            if let firebaseToken = FIRInstanceID.instanceID().token() {
-                try User.saveFirebaseToken(token: token,pushNotificationToken: firebaseToken)
-            }
+            //TODO: Use APN Token
+//            if let firebaseToken = FIRInstanceID.instanceID().token() {
+//                try User.saveFirebaseToken(token: token,pushNotificationToken: firebaseToken)
+//            }
             let storyBoard = UIStoryboard(name: "Map", bundle: nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "reveal_controller")
             DispatchQueue.main.async {

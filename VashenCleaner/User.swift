@@ -9,18 +9,23 @@
 import Foundation
 import CoreData
 
-public class User {
+@objc(User)
+public class User:NSManagedObject {
     
-    public var name: String!
-    public var lastName: String!
-    public var email: String!
-    public var phone: String!
-    public var id: String!
-    public var token: String!
-    public var rating:Double!
-    public var encodedImage:String!
+    @NSManaged var name: String
+    @NSManaged var lastName: String
+    @NSManaged var email: String
+    @NSManaged var phone: String
+    @NSManaged var id: String
+    @NSManaged var token: String
+    @NSManaged var score:Int16
+    @NSManaged var encodedImage:String
     
     public static let HTTP_LOCATION = "Cleaner/"
+    
+    public static func newUser()->User{
+        return DataBase.newUser()
+    }
     
     public static func updateLocation(token:String, latitud:Double, longitud:Double) throws {
         let url = HttpServerConnection.buildURL(location: HTTP_LOCATION + "UpdateLocation")

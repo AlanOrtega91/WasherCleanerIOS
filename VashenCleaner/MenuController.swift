@@ -28,7 +28,7 @@ class MenuController: UIViewController {
     
     func initView(){
         name.text = user.name + user.lastName
-        rating.text = String(user.rating)
+        rating.text = String(describing: user.score)
         let imageData = Data(base64Encoded: user.encodedImage, options: .ignoreUnknownCharacters)
         image.image = UIImage(data: imageData! as Data)
     }

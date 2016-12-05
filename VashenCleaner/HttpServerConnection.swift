@@ -20,7 +20,7 @@ public class HttpServerConnection
         do {
             let request = NSMutableURLRequest.init(url: URL.init(string: urlPath)!)
             request.httpMethod = "POST"
-            request.timeoutInterval = 5
+            request.timeoutInterval = 10
             request.httpBody = params.data(using: String.Encoding.utf8, allowLossyConversion: true)
             
             let semaphore = DispatchSemaphore(value: 0)

@@ -11,21 +11,17 @@ import CoreData
 
 public class ProfileReader {
     
-    var managedContext = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
-    
     let HTTP_LOCATION = "Cleaner/"
-    var user = User()
+    var user = User.newUser()
     var services = [Service]()
     
     public static func run() throws{
         do{
+            DataBase.deleteAllTables()
             let token = AppData.readToken()
             let profile = ProfileReader()
             try profile.initialRead(token: token)
-            DataBase.saveUser(user: profile.user)
             AppData.saveData(user: profile.user)
-            DataBase.saveServices(services: profile.services)
-            
         } catch{
             throw ProfileReaderError.errorReadingProfile
         }
@@ -41,7 +37,7 @@ public class ProfileReader {
             }
             
             if let  rating = response["Calificacion"] as? String {
-                readUser(parameters: response["User Info"] as! NSDictionary, rating: Double(rating)!)
+                readUser(parameters: response["User Info"] as! NSDictionary, rating: Int16(Int((Double(rating)?.rounded())!)))
             } else {
                 readUser(parameters: response["User Info"] as! NSDictionary, rating: 0)
             }
@@ -53,11 +49,10 @@ public class ProfileReader {
     
     public static func run(email:String, withPassword password:String) throws{
         do{
+            DataBase.deleteAllTables()
             let profile = ProfileReader()
             try profile.login(email: email, withPassword: password)
-            DataBase.saveUser(user: profile.user)
             AppData.saveData(user: profile.user)
-            DataBase.saveServices(services: profile.services)
         } catch{
             throw ProfileReaderError.errorReadingProfile
         }
@@ -72,7 +67,7 @@ public class ProfileReader {
                 throw ProfileReaderError.errorReadingData
             }
             if let  rating = response["Calificacion"] as? String {
-                readUser(parameters: response["User Info"] as! NSDictionary, rating: Double(rating)!)
+                readUser(parameters: response["User Info"] as! NSDictionary, rating: Int16(Int((Double(rating)?.rounded())!)))
             } else {
                 readUser(parameters: response["User Info"] as! NSDictionary, rating: 0)
             }
@@ -82,46 +77,54 @@ public class ProfileReader {
         }
     }
     
-    private func readUser(parameters: NSDictionary, rating:Double){
-        user.name = parameters["Nombre"]! as? String
-        user.lastName = parameters["PrimerApellido"]! as? String
-        user.email = parameters["Email"]! as? String
-        user.id = parameters["idLavador"]! as? String
-        user.token = parameters["Token"]! as? String
-        user.phone = parameters["Telefono"]! as? String
-        user.encodedImage = User.getEncodedImageForUser(id: user.id)
-        user.rating = rating
+    private func readUser(parameters: NSDictionary, rating:Int16){
+        user.name = parameters["Nombre"] as! String
+        user.lastName = parameters["PrimerApellido"] as! String
+        user.email = parameters["Email"] as! String
+        user.id = parameters["idLavador"] as! String
+        user.token = parameters["Token"] as! String
+        user.phone = parameters["Telefono"] as! String
+        user.score =  rating
+        user.encodedImage = User.getEncodedImageForUser(id: user.id)!
     }
     
     
     private func readHistory(parameters: Array<NSDictionary>){
         for serviceJSON in parameters {
-            let service: Service = Service()
+            let service = Service.newService()
             service.id = serviceJSON["id"] as! String
             service.car = serviceJSON["coche"] as! String
             service.status = serviceJSON["status"] as! String
             service.service = serviceJSON["servicio"] as! String
             service.price = serviceJSON["precio"] as! String
-            service.description = serviceJSON["descripcion"] as! String
+            service.serviceDescription = serviceJSON["descripcion"] as! String
             
             service.latitud = Double(serviceJSON["latitud"] as! String)!
             service.longitud = Double(serviceJSON["longitud"] as! String)!
-            service.clientName = serviceJSON["nombreCliente"] as? String
-            service.clientCel = serviceJSON["telCliente"] as? String
-            service.estimatedTime = serviceJSON["tiempoEstimado"] as? String
-            service.plates = serviceJSON["Placas"] as! String
-            service.brand = serviceJSON["Marca"] as! String
-            service.color = serviceJSON["Color"] as! String
-            service.type = serviceJSON["Tipo"] as! String
+            service.clientName = serviceJSON["nombreCliente"] as! String
+            service.clientCel = serviceJSON["telCliente"] as! String
+            service.estimatedTime = serviceJSON["tiempoEstimado"] as! String
+            if let plates = serviceJSON["Placas"] as? String {
+                service.plates = plates
+            }
+            if let brand = serviceJSON["Placas"] as? String {
+                service.brand = brand
+            }
+            if let color = serviceJSON["Color"] as? String {
+                service.color = color
+            }
+            if let type = serviceJSON["Tipo"] as? String {
+                service.type = type
+            }
             
             let format = DateFormatter()
             format.dateFormat = "yyy-MM-dd HH:mm:ss"
             format.locale = Locale(identifier: "us")
             if let finalTime = serviceJSON["horaFinalEstimada"] as? String{
-                service.finalTime = format.date(from: finalTime)
+                service.finalTime = format.date(from: finalTime)!
             }
             if let startedTime = serviceJSON["fechaEmpezado"] as? String {
-                service.startedTime = format.date(from: startedTime)
+                service.startedTime = format.date(from: startedTime)!
             }
             services.append(service)
         }

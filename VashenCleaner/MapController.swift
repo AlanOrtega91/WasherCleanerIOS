@@ -288,18 +288,17 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     
     func modifyClock(){
         if activeService != nil {
-            if activeService.finalTime != nil {
-                let diff = activeService.finalTime.timeIntervalSinceNow
-                let minutes = diff/1000/60 + 1
-                var display = ""
-                if diff < 0 {
-                    display = "Terminar"
-                    self.clock.cancel()
-                } else {
-                    display = "Terminando servicio en: " + String(Int(minutes)) + " min"
-                }
-                self.configureActiveServiceStarted(display: display)
+            print(activeService.finalTime)
+            let diff = activeService.finalTime.timeIntervalSinceNow
+            let minutes = diff/1000/60 + 1
+            var display = ""
+            if diff < 0 {
+                display = "Terminar"
+                self.clock.cancel()
+            } else {
+                display = "Terminando servicio en: " + String(Int(minutes)) + " min"
             }
+            self.configureActiveServiceStarted(display: display)
         }
     }
     
@@ -325,16 +324,13 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
         do {
             cancelSent = true
             try Service.cancelService(idService: activeService.id, withToken: token)
-            var auxServices = DataBase.readServices()
+            
             if activeService != nil {
-                if let index = auxServices?.index(where: {$0.id == activeService.id}) {
-                    auxServices![index].status = "Canceled"
-                    auxServices?.remove(at: index)
-                    DataBase.saveServices(services: auxServices!)
-                    AppData.saveIdService(id: activeService.id)
-                    AppData.saveMessage(message: "Canceled")
-                    AppData.notifyNewData(newData: true)
-                }
+                let serviceDelete = DataBase.readService(id: activeService.id)
+                DataBase.deleteService(service: serviceDelete!)
+                AppData.saveIdService(id: activeService.id)
+                AppData.saveMessage(message: "Canceled")
+                AppData.notifyNewData(newData: true)
             }
             cancelSent = false
         } catch Service.ServiceError.noSessionFound {
@@ -357,9 +353,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
             for service in self.services {
                 do {
                     if let acceptedService = try Service.acceptService(idService: service.id, withToken: self.token) {
-                        var auxServices = DataBase.readServices()
-                        auxServices?.append(acceptedService)
-                        DataBase.saveServices(services: auxServices!)
                         AppData.saveIdService(id: acceptedService.id)
                         AppData.notifyNewData(newData: true)
                         self.startActiveServiceCycle()
@@ -388,6 +381,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     }
     
     func changeServiceStatus(status: Int, statusString:String, statusName:String){
+        //clock.cancel()
         self.statusDisplay.setTitle(statusName, for: .normal)
         DispatchQueue.global().async {
             do {
@@ -395,17 +389,16 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                 if self.lastStateSent != status {
                     self.lastStateSent = status
                     try Service.changeServiceStatus(idService: self.activeService.id, withToken: self.token, withStatusId: String(status))
-                    var auxServices = DataBase.readServices()
-                    let index = auxServices?.index(where: {$0.id == self.activeService.id})
-                    auxServices![index!].status = statusString
-                    if statusString == "Started" {
-                        let format = DateFormatter()
-                        format.dateFormat = "yyy-MM-dd HH:mm:ss"
-                        format.locale = Locale(identifier: "us")
-                        auxServices![index!].startedTime = Date()
-                        auxServices![index!].finalTime = Date().addingTimeInterval(Double(auxServices![index!].estimatedTime)! * 60)
+                    if let service = DataBase.readService(id: self.activeService.id) {
+                        service.status = statusString
+                        if statusString == "Started" {
+                            let format = DateFormatter()
+                            format.dateFormat = "yyy-MM-dd HH:mm:ss"
+                            format.locale = Locale(identifier: "us")
+                            service.startedTime = Date()
+                            service.finalTime = Date().addingTimeInterval(Double(service.estimatedTime)! * 60)
+                        }
                     }
-                    DataBase.saveServices(services: auxServices!)
                     AppData.saveIdService(id: self.activeService.id)
                     AppData.notifyNewData(newData: true)
                 }
