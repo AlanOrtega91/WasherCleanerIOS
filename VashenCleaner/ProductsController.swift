@@ -69,7 +69,7 @@ class ProductsController: UIViewController,UICollectionViewDataSource,UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: "product_row", for: indexPath) as! ProductCell
         let product = products[indexPath.row]
-        cell.amount.text = product.cantidad + "%"
+        cell.amount.text = String(round((Double(product.cantidad)!/100)*100)/100) + " lt."
         cell.name.text = product.name
         checkForImage(cell: cell, forProduct: product)
         return cell
@@ -117,6 +117,9 @@ class ProductsController: UIViewController,UICollectionViewDataSource,UICollecti
             break
         }
         cell.product.image = image
+        let aspectRatio =  (image?.size.width)! / (image?.size.height)!
+        
+        cell.productWidth.constant = cell.productHeight.constant*aspectRatio
     }
     
     

@@ -78,13 +78,56 @@ public class User:NSManagedObject {
     }
     
     public static func getEncodedImageForUser(id:String) -> String? {
-        let url = URL(string: "http://imanio.zone/Vashen/images/cleaners/\(id)/profile_image.jpg")!
-        do {
-            let imageData = try Data.init(contentsOf: url)
+        let url = NSURL(string: "http://washer.mx/Washer/images/cleaner/\(id)/profile_image.jpg")!
+        if let imageData = NSData.init(contentsOf: url as URL) {
             return imageData.base64EncodedString(options: .lineLength64Characters)
+        } else {
+            return nil
+        }
+    }
+    
+    public static func saveEncodedImageToFileAndGetPath(imageString:String) -> String? {
+        let imageName = "profile.jpg"
+        if let dataImage = Data(base64Encoded: imageString, options: .ignoreUnknownCharacters) {
+            if let image = UIImage(data: dataImage) {
+                let fileName = getDocumentsDirectory().appendingPathComponent(imageName)
+                do {
+                    if let imageToSave = UIImageJPEGRepresentation(image, 0.5) {
+                        try imageToSave.write(to: fileName)
+                        return imageName
+                    }
+                } catch {
+                    return nil
+                }
+            }
+        }
+        return nil
+    }
+    
+    public static func saveImageToFileAndGetPath(image:UIImage) -> String? {
+        let imageName = "profile.jpg"
+        let fileName = getDocumentsDirectory().appendingPathComponent(imageName)
+        do {
+            if let imageToSave = UIImageJPEGRepresentation(image, 0.5) {
+                try imageToSave.write(to: fileName)
+                return imageName
+            }
         } catch {
             return nil
         }
+        return nil
+    }
+    
+    public static func readImageDataFromFile(name:String) -> UIImage? {
+        let fileName = getDocumentsDirectory().appendingPathComponent(name)
+        let image = UIImage(contentsOfFile: fileName.path)
+        return image
+    }
+    
+    public static func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
     }
     
     public enum UserError: Error{

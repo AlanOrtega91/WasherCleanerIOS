@@ -18,10 +18,7 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let backgroundImage = UIImageView(frame: UIScreen.main.bounds)
-        backgroundImage.image = UIImage(named: "background")
         initValues()
-        self.view.insertSubview(backgroundImage, at: 0)
         self.tableView.delegate = self
         self.tableView.dataSource = self
     }
@@ -46,14 +43,6 @@ class HistoryController: UIViewController,UITableViewDataSource,UITableViewDeleg
         format.locale = Locale(identifier: "us")
         cell.date.text = format.string(from: service.startedTime)
         cell.serviceType.text = service.service + " $" + service.price
-        if imageSet[indexPath.row] == 0 {
-            cell.locationImage.image = nil
-            DispatchQueue.global().async {
-                self.setMapImage(map: cell.locationImage, withService: service, withPosition: indexPath.row)
-            }
-        } else {
-            cell.locationImage.image = images[indexPath.row]
-        }
         return cell
     }
     

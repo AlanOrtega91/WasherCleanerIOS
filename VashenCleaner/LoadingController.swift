@@ -38,11 +38,12 @@ public class LoadingController: UIViewController {
     func readProfile(){
         do{
             try ProfileReader.run(email: email, withPassword: password)
-            let token = AppData.readToken()
+            if let token = AppData.readToken() {
             //TODO: Use APN Token
-//            if let firebaseToken = FIRInstanceID.instanceID().token() {
-//                try User.saveFirebaseToken(token: token,pushNotificationToken: firebaseToken)
-//            }
+            if let notificationToken = AppData.readNotificationToken() {
+                try User.saveFirebaseToken(token: token,pushNotificationToken: notificationToken)
+                }
+            }
             let storyBoard = UIStoryboard(name: "Map", bundle: nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "reveal_controller")
             DispatchQueue.main.async {

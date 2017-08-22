@@ -10,8 +10,8 @@ import Foundation
 
 class MenuVC: UITableViewController {
     
-    var TableArray = ["SERVICIOS RECIENTES","ESTATUS DE PRODUCTOS","CERRAR SESION"]
-    //var ImageMenuArray = [UIImage(named: "hist_icon")!,UIImage(named: "config_icon")!]
+    var TableArray = ["SERVICIOS RECIENTES","PRODUCTOS","CERRAR SESION"]
+    var ImageMenuArray = [UIImage(named: "hist_icon")!,UIImage(named: "productos")!]
     
     override func viewDidLoad() {
         let imageView = UIImageView(frame: self.tableView.frame)
@@ -23,12 +23,14 @@ class MenuVC: UITableViewController {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableCell(withIdentifier: "headerCell") as! HeaderCell
         if let user = DataBase.readUser() {
-            if user.encodedImage.isEmpty {
-                cell.userImage.image = UIImage(named: "default_image")
+            if user.encodedImage != "" {
+                if let userImage = User.readImageDataFromFile(name: user.encodedImage) {
+                    cell.userImage.image = userImage
+                }
             } else {
-                let dataDecoded = Data(base64Encoded: user.encodedImage, options: .ignoreUnknownCharacters)
-                cell.userImage.image = UIImage(data: dataDecoded!)!
+                cell.userImage.image = UIImage(named: "default_image")
             }
+            cell.userName.text = user.name + " " + user.lastName
             cell.userName.text = user.name + " " + user.lastName
             switch user.score {
             case 0:
@@ -94,6 +96,15 @@ class MenuVC: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "menuCell", for: indexPath) as! MenuCell
         cell.menuLabel.text = TableArray[indexPath.row]
+        if TableArray[indexPath.row] != "CERRAR SESION" {
+            cell.menuDivider.isHidden = true
+            let image = ImageMenuArray[indexPath.row]
+            
+            let aspectRatio =  (image.size.width) / (image.size.height)
+            
+            cell.widthConstant.constant = cell.heightConstant.constant*aspectRatio
+            cell.menuImage.image = image
+        }
         return cell
     }
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

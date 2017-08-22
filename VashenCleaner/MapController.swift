@@ -8,6 +8,8 @@
 
 import UIKit
 import MapKit
+import UserNotifications
+
 
 class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegate,SWRevealViewControllerDelegate {
 
@@ -48,6 +50,14 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
         menuOpenButton.action = #selector(SWRevealViewController.revealToggle(_:))
         self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         self.revealViewController().delegate = self
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge], completionHandler: {
+                (didAllow, error) in
+                
+            })
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -63,6 +73,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
         cancelTimers()
         self.locManager.stopUpdatingLocation()
     }
+    
     
     func initValues(){
         idClient = AppData.readUserId()
@@ -127,7 +138,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                 let servicesAmount = services.count
                 services = try Service.getServices(latitud: currentLocation.coordinate.latitude, longitud: currentLocation.coordinate.longitude, withToken: token)
                 if servicesAmount == 0 && services.count > 0 {
-                    //SendAlert for services found
+                    sendNotification()
                 }
             } catch Service.ServiceError.noSessionFound{
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
@@ -138,6 +149,27 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
             } catch {
                 print("Error getting services")
             }
+        }
+    }
+    
+    func sendNotification(){
+        if #available(iOS 10.0, *) {
+            let content = UNMutableNotificationContent()
+            content.title = "Washer"
+            content.body = "Servicios nuevos encontrados"
+            content.sound = UNNotificationSound.default()
+            content.badge = 1
+            content.setValue(true, forKey: "shouldAlwaysAlertWhileAppIsForeground")
+            
+            // Deliver the notification in five seconds.
+            let request = UNNotificationRequest.init(identifier: "Servicios", content: content, trigger: nil)
+            
+            // Schedule the notification.
+            let center = UNUserNotificationCenter.current()
+            center.add(request, withCompletionHandler: nil)
+            print("should have been added")
+        } else {
+            // Fallback on earlier versions
         }
     }
     
@@ -287,18 +319,18 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
     }
     
     func modifyClock(){
-        if activeService != nil {
-            print(activeService.finalTime)
-            let diff = activeService.finalTime.timeIntervalSinceNow
-            let minutes = diff/1000/60 + 1
-            var display = ""
-            if diff < 0 {
-                display = "Terminar"
-                self.clock.cancel()
-            } else {
-                display = "Terminando servicio en: " + String(Int(minutes)) + " min"
-            }
-            self.configureActiveServiceStarted(display: display)
+        if activeService != nil{
+                print(activeService.finalTime)
+                let diff = activeService.finalTime.timeIntervalSinceNow
+                let minutes = diff/1000/60 + 1
+                var display = ""
+                if diff < 0 {
+                    display = "Terminar"
+                    self.clock.cancel()
+                } else {
+                    display = "Terminando servicio en: " + String(Int(minutes)) + " min"
+                }
+                self.configureActiveServiceStarted(display: display)
         }
     }
     
@@ -324,15 +356,6 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
         do {
             cancelSent = true
             try Service.cancelService(idService: activeService.id, withToken: token)
-            
-            if activeService != nil {
-                let serviceDelete = DataBase.readService(id: activeService.id)
-                DataBase.deleteService(service: serviceDelete!)
-                AppData.saveIdService(id: activeService.id)
-                AppData.saveMessage(message: "Canceled")
-                AppData.notifyNewData(newData: true)
-            }
-            cancelSent = false
         } catch Service.ServiceError.noSessionFound {
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "main")
@@ -375,7 +398,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                     self.acceptSent = false
                 }
             }
-            self.createAlertInfo(message: "Error acceptando servicio...checha tus productos")
+            self.createAlertInfo(message: "Error acceptando servicio")
             self.acceptSent = false
         }
     }
@@ -395,7 +418,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                             let format = DateFormatter()
                             format.dateFormat = "yyy-MM-dd HH:mm:ss"
                             format.locale = Locale(identifier: "us")
-                            service.startedTime = Date()
+                            service.startedTime = Date(timeIntervalSinceNow: 0)
                             service.finalTime = Date().addingTimeInterval(Double(service.estimatedTime)! * 60)
                         }
                     }
@@ -403,7 +426,7 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                     AppData.notifyNewData(newData: true)
                 }
                 self.changingStatus = false
-                
+                self.lastStateSent = -1
             } catch Service.ServiceError.noSessionFound{
                 self.createAlertInfo(message: "Error con la session")
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
@@ -412,35 +435,41 @@ class MapController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegat
                     self.present(nextViewController, animated: true, completion: nil)
                 }
                 self.changingStatus = false
+                self.lastStateSent = -1
             } catch {
                 self.createAlertInfo(message: "Error al cambiar el estado")
                 self.changingStatus = false
+                self.lastStateSent = -1
             }
         }
     }
     
     func initLocation(){
         locManager.delegate = self
+        self.locManager.allowsBackgroundLocationUpdates = true
         self.locManager.requestAlwaysAuthorization()
-        self.locManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
-            locManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locManager.startUpdatingLocation()
+            configureLocation()
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if CLLocationManager.locationServicesEnabled() {
-            locManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locManager.startUpdatingLocation()
-            DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0, execute: {
-                self.myLocationClicked("" as AnyObject)
-            })
+            configureLocation()
         }
+    }
+    
+    func configureLocation() {
+        locManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locManager.startUpdatingLocation()
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0, execute: {
+            self.myLocationClicked("" as AnyObject)
+        })
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         currentLocation = manager.location
+        print("location update")
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

@@ -12,7 +12,6 @@ import AVFoundation
 class InitController: UIViewController {
     
     var settings : UserDefaults = UserDefaults.standard
-    var token : String = ""
     var clickedAlertOK = false
 
     @IBOutlet var videoView: UIView!
@@ -20,9 +19,12 @@ class InitController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         animateView()
-        initValues()
-        DispatchQueue.global().async {
-            self.decideNextView()
+        if AppData.firstTime() {
+            self.createAlertTerms()
+        } else {
+            DispatchQueue.global().async {
+                self.decideNextView()
+            }
         }
     }
     
@@ -37,12 +39,8 @@ class InitController: UIViewController {
     }
     
     
-    func initValues() {
-        token = AppData.readToken()
-    }
-    
     func decideNextView(){
-        if token == "" {
+        if AppData.readToken() == nil {
             changeView(storyBoardName: "Main", controllerName: "main")
         } else{
             tryReadUser()
@@ -53,7 +51,13 @@ class InitController: UIViewController {
         do{
             try ProfileReader.run()
             if let user = DataBase.readUser() {
-                user.token = token
+                if let token = AppData.readToken() {
+                    user.token = token
+                    //TODO: Implement APNS Token
+                    if let notificationToken = AppData.readNotificationToken() {
+                        try User.saveFirebaseToken(token: token,pushNotificationToken: notificationToken)
+                    }
+                }
                 AppData.saveData(user: user)
             } else {
                 createAlertInfo(message: "Error")
@@ -67,10 +71,6 @@ class InitController: UIViewController {
                 }
                 return
             }
-            //TODO: Implement APNS Token
-//            if let firebaseToken = FIRInstanceID.instanceID().token() {
-//                try User.saveFirebaseToken(token: token,pushNotificationToken: firebaseToken)
-//            }
 
             changeView(storyBoardName: "Map", controllerName: "reveal_controller")
         } catch User.UserError.errorSavingFireBaseToken{
@@ -98,6 +98,19 @@ class InitController: UIViewController {
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {action in
                 self.clickedAlertOK = true
             }))
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func createAlertTerms(){
+        let alert = UIAlertController(title: "", message: "Al utilizar esta aplicacion aceptas los terminos y condiciones de uso en la pagina http://www.washer.mx", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {action in
+            AppData.used()
+            DispatchQueue.global().async {
+                self.decideNextView()
+            }
+        }))
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
         }

@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreData
+import Firebase
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,20 +17,76 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var findRequestsNearbyTimer:DispatchSourceTimer!
     var services = [Service]()
-
+    var stateReceived = 0
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-        //TODO APNS
-        let notificationTypes: UIUserNotificationType = [UIUserNotificationType.alert, UIUserNotificationType.badge, UIUserNotificationType.sound]
-        let pushNotificationSettings = UIUserNotificationSettings(types: notificationTypes, categories: nil)
-        application.registerUserNotificationSettings(pushNotificationSettings)
-        application.registerForRemoteNotifications()
+        
+        FIRApp.configure()
+        self.registrerForRemoteNotifications(application: application)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.tokenRefreshNotificaiton),
+                                               name: NSNotification.Name.firInstanceIDTokenRefresh, object: nil)
         
         return true
     }
 
-
+    func registrerForRemoteNotifications(application: UIApplication){
+        let pushNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+        application.registerUserNotificationSettings(pushNotificationSettings)
+        application.registerForRemoteNotifications()
+    }
+    
+    func tokenRefreshNotificaiton(notification: NSNotification) {
+        if let refreshedToken = FIRInstanceID.instanceID().token() {
+            print("FCM InstanceID token: \(refreshedToken)")
+            AppData.saveNotificationToken(notificationToken: refreshedToken)
+            connectToFcm()
+        } else {
+            print("FCM error reading token")
+        }
+    }
+    
+    func connectToFcm() {
+        FIRMessaging.messaging().connect { (error) in
+            if (error != nil) {
+                print("Unable to connect with FCM in app delegate. \(error)")
+            } else {
+                print("Connected to FCM in app delegate.")
+                self.sendNotificationToken()
+            }
+        }
+    }
+    
+    func sendNotificationToken() {
+        do {
+            if let token = AppData.readToken() {
+                if let fbToken = AppData.readNotificationToken() {
+                    try User.saveFirebaseToken(token: token, pushNotificationToken: fbToken)
+                }
+            }
+        } catch {
+            
+        }
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: .prod)
+        if let tokenF = FIRInstanceID.instanceID().token() {
+            AppData.saveNotificationToken(notificationToken: tokenF)
+            connectToFcm()
+            print("FCM Token:\(tokenF)")
+        } else {
+            print("FCM Couldnt save token")
+        }
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print(error)
+        AppData.saveNotificationToken(notificationToken: "")
+    }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        print(userInfo)
         if let state = userInfo["state"] as? String{
             switch state {
             case "-1":
@@ -72,67 +130,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let finalTime = serviceJson["horaFinalEstimada"] as? String{
                 service.finalTime = format.date(from: finalTime) as Date!
             }
-        } else {
-            addService(jsonService: serviceJson)
         }
         AppData.notifyNewData(newData: true)
-    }
-    
-    func addService(jsonService: NSDictionary){
-        let service = Service.newService()
-        service.id = jsonService["id"] as! String
-        service.car = jsonService["coche"] as! String
-        service.status = jsonService["status"] as! String
-        service.service = jsonService["servicio"] as! String
-        service.price = jsonService["precio"] as! String
-        service.serviceDescription = jsonService["descripcion"] as! String
-        service.latitud = Double(jsonService["latitud"] as! String)!
-        service.longitud = Double(jsonService["longitud"] as! String)!
-        service.clientName = jsonService["nombreCliente"] as! String
-        service.clientCel = jsonService["celCliente"] as! String
-        let format = DateFormatter()
-        format.dateFormat = "yyy-MM-dd HH:mm:ss"
-        format.locale = Locale(identifier: "us")
-        if let startedTime = jsonService["fechaEmpezado"] as? String {
-            service.startedTime = format.date(from: startedTime) as Date!
-        }
-        if let finalTime = jsonService["horaFinalEstimada"] as? String {
-            service.finalTime = format.date(from: finalTime) as Date!
-        }
     }
     
     func deleteService(serviceJson:NSDictionary){
         let id = serviceJson["id"] as! String
-        let service = DataBase.readService(id: id)
-        DataBase.deleteService(service: service!)
-        AppData.notifyNewData(newData: true)
+        if let service = DataBase.readService(id: id) {
+            DataBase.deleteService(service: service)
+            AppData.notifyNewData(newData: true)
+        }
     }
     
     func sendPopUp(message:String){
         AppData.saveMessage(message: message)
-    }
-    
-    func tokenRefreshNotificaiton(notification: NSNotification) {
-        //TODO: Implement APNS Token
-//        if let refreshedToken = FIRInstanceID.instanceID().token() {
-//            // Connect to FCM since connection may have failed when attempted before having a token.
-//            connectToFcm()
-//            if AppData.readToken() != "" {
-//                sendTokenToServer(firebaseToken: refreshedToken)
-//            }
-//        }
-    }
-    // [END refresh_token]
-    
-    func sendTokenToServer(firebaseToken:String){
-        do {
-            try User.saveFirebaseToken(token: AppData.readToken(),pushNotificationToken: firebaseToken)
-        } catch {
-            print("Error saving firebase Token")
-        }
-    }
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     }
 
 
@@ -182,7 +193,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // The persistent store coordinator for the application. This implementation creates and returns a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.appendingPathComponent("SingleViewCoreData.sqlite")
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("WasherV1.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
             try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)

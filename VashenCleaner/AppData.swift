@@ -16,10 +16,11 @@ public class AppData {
         static var SENT_ALERT  = "alert"
         static var IN_BACKGROUND  = "inBackground"
         static var PAYMENT_TOKEN  = "paymentToken"
-        static var FB_TOKEN  = "fireBase"
+        static var NOTIFICATION_TOKEN  = "notificationToken"
         static var MESSAGE  = "notificationMessage"
         static var SERVICE_CHANGED  = "serviceChanged"
-    static var IDSERVICE = "idService"
+        static var IDSERVICE = "idService"
+    static var USED = "used"
     
     public static func saveData(user: User){
         let settings : UserDefaults = UserDefaults.standard
@@ -32,21 +33,21 @@ public class AppData {
         settings.set(id, forKey: IDSERVICE)
     }
     
-    public static func readToken() -> String{
+    public static func readToken() -> String? {
         let settings : UserDefaults = UserDefaults.standard
         if let token = settings.string(forKey: TOKEN) {
             return token
         } else {
-            return ""
+            return nil
         }
     }
     
-    public static func readUserId() -> String{
+    public static func readUserId() -> String?{
         let settings : UserDefaults = UserDefaults.standard
         if let idClient = settings.string(forKey: IDCLIENT) {
             return idClient
         } else {
-            return ""
+            return nil
         }
     }
     
@@ -55,21 +56,26 @@ public class AppData {
         settings.set(paymentToken, forKey: PAYMENT_TOKEN)
     }
     
-    public static func readPaymentToken() -> String{
+    public static func readPaymentToken() -> String? {
         let settings : UserDefaults = UserDefaults.standard
         if let paymentToken = settings.string(forKey: PAYMENT_TOKEN) {
             return paymentToken
         } else {
-            return ""
+            return nil
         }
     }
     
-    public static func readFirebaseToken() -> String{
+    public static func saveNotificationToken(notificationToken:String){
         let settings : UserDefaults = UserDefaults.standard
-        if let firebaseToken = settings.string(forKey: FB_TOKEN) {
-            return firebaseToken
+        settings.set(notificationToken, forKey: NOTIFICATION_TOKEN)
+    }
+    
+    public static func readNotificationToken() -> String? {
+        let settings : UserDefaults = UserDefaults.standard
+        if let notificationToken = settings.string(forKey: NOTIFICATION_TOKEN) {
+            return notificationToken
         } else {
-            return ""
+            return nil
         }
     }
     
@@ -88,12 +94,12 @@ public class AppData {
         settings.set(message, forKey: MESSAGE)
     }
     
-    public static func getMessage() -> String {
+    public static func getMessage() -> String? {
         let settings : UserDefaults = UserDefaults.standard
         if let message = settings.string(forKey: MESSAGE) {
             return message
         } else {
-            return ""
+            return nil
         }
     }
     
@@ -102,11 +108,27 @@ public class AppData {
         settings.removeObject(forKey: MESSAGE)
     }
     
+    public static func used(){
+        let setting : UserDefaults = UserDefaults.standard
+        setting.set(true, forKey: USED)
+    }
+    
+    public static func firstTime()->Bool{
+        let settings: UserDefaults = UserDefaults.standard
+        if settings.bool(forKey: USED){
+            return false
+        } else {
+            return true
+        }
+    }
+    
     public static func eliminateData() {
         let settings : UserDefaults = UserDefaults.standard
         settings.removeObject(forKey: TOKEN)
-        settings.removeObject(forKey: SENT_ALERT)
         settings.removeObject(forKey: IDCLIENT)
+        settings.removeObject(forKey: SENT_ALERT)
         settings.removeObject(forKey: PAYMENT_TOKEN)
+        settings.removeObject(forKey: SERVICE_CHANGED)
+        settings.removeObject(forKey: IDSERVICE)
     }
 }

@@ -15,4 +15,6 @@ class ProductCell: UICollectionViewCell {
     @IBOutlet weak var eco: UIImageView!
     @IBOutlet weak var amount: UILabel!
     @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var productWidth: NSLayoutConstraint!
+    @IBOutlet weak var productHeight: NSLayoutConstraint!
 }

@@ -29,7 +29,6 @@ public class Service:NSManagedObject {
     @NSManaged var clientName:String
     @NSManaged var clientCel:String
     @NSManaged var id:String
-    @NSManaged var address:String
     @NSManaged var plates:String
     @NSManaged var brand:String
     @NSManaged var color:String
@@ -91,7 +90,6 @@ public class Service:NSManagedObject {
             service.plates = json["Placas"] as! String
             service.brand = json["Marca"] as! String
             service.color = json["Color"] as! String
-            service.type = json["Tipo"] as! String
             
             return service
         } catch HttpServerConnection.HttpError.connectionException {
@@ -115,7 +113,6 @@ public class Service:NSManagedObject {
                 for serviceJson in json {
                     let service = Service.newService()
                     service.id = serviceJson["idServicioPedido"] as! String
-                    service.address = serviceJson["Direccion"] as! String
                     service.latitud = Double(serviceJson["Latitud"] as! String)!
                     service.longitud = Double(serviceJson["Longitud"] as! String)!
                     services.append(service)

@@ -34,6 +34,7 @@
 		E714A6951D682D5E008DE774 /* SummaryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A67B1D682D5E008DE774 /* SummaryController.swift */; };
 		E714A6981D682DE3008DE774 /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = E714A6971D682DE3008DE774 /* Product.swift */; };
 		E7153DF31D90A51A00F169B9 /* ProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7153DF21D90A51A00F169B9 /* ProductCell.swift */; };
+		E71B4D7E1E36818800E0FC5E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E71B4D7D1E36818800E0FC5E /* GoogleService-Info.plist */; };
 		E72C5E731DA569B80069AE94 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E72C5E721DA569B80069AE94 /* MapKit.framework */; };
 		E73F566A1D86F82B00829AA8 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E73F56691D86F82B00829AA8 /* SWRevealViewController.m */; };
 		E79C8A761DCD166600846CA3 /* Splash.mov in Resources */ = {isa = PBXBuildFile; fileRef = E79C8A751DCD166600846CA3 /* Splash.mov */; };
@@ -43,6 +44,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6542124E1047001E3B7D76F2 /* Pods_VashenCleaner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VashenCleaner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A22B80BC3768B0176EFB979 /* Pods-VashenCleaner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VashenCleaner.release.xcconfig"; path = "Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner.release.xcconfig"; sourceTree = "<group>"; };
+		8C67FD178CF7DD1EDA67C552 /* Pods-VashenCleaner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VashenCleaner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner.debug.xcconfig"; sourceTree = "<group>"; };
 		E71410191D6CC73C00C97798 /* MenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		E714101B1D6CD21700C97798 /* ProductsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductsController.swift; sourceTree = "<group>"; };
 		E714101D1D6CEF7A00C97798 /* InformationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationController.swift; sourceTree = "<group>"; };
@@ -75,6 +79,7 @@
 		E714A6971D682DE3008DE774 /* Product.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		E7153DF21D90A51A00F169B9 /* ProductCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductCell.swift; sourceTree = "<group>"; };
 		E7153DF41D92038500F169B9 /* VashenCleaner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VashenCleaner.entitlements; sourceTree = "<group>"; };
+		E71B4D7D1E36818800E0FC5E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E72C5E721DA569B80069AE94 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		E73F56681D86F82B00829AA8 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		E73F56691D86F82B00829AA8 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
@@ -100,8 +105,18 @@
 			isa = PBXGroup;
 			children = (
 				E72C5E721DA569B80069AE94 /* MapKit.framework */,
+				6542124E1047001E3B7D76F2 /* Pods_VashenCleaner.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ACA4B007359C25F246A951BF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8C67FD178CF7DD1EDA67C552 /* Pods-VashenCleaner.debug.xcconfig */,
+				6A22B80BC3768B0176EFB979 /* Pods-VashenCleaner.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		E714A6211D682715008DE774 = {
@@ -110,6 +125,7 @@
 				E714A62C1D682715008DE774 /* VashenCleaner */,
 				E714A62B1D682715008DE774 /* Products */,
 				71ACAE68D0FC75FB705F9035 /* Frameworks */,
+				ACA4B007359C25F246A951BF /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -140,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				E79C8A751DCD166600846CA3 /* Splash.mov */,
+				E71B4D7D1E36818800E0FC5E /* GoogleService-Info.plist */,
 				E714A6421D6828E1008DE774 /* VashenCleaner-Bridging-Header.h */,
 				E73F56681D86F82B00829AA8 /* SWRevealViewController.h */,
 				E73F56691D86F82B00829AA8 /* SWRevealViewController.m */,
@@ -208,7 +225,6 @@
 				E714A6261D682715008DE774 /* Sources */,
 				E714A6271D682715008DE774 /* Frameworks */,
 				E714A6281D682715008DE774 /* Resources */,
-				1814113902F95C28C2631529 /* [CP] Embed Pods Frameworks */,
 				5AF8F233B1096177F6A94382 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -227,7 +243,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Alan;
 				TargetAttributes = {
 					E714A6291D682715008DE774 = {
@@ -274,28 +290,13 @@
 				E714A6381D682715008DE774 /* Assets.xcassets in Resources */,
 				E714A65F1D682D23008DE774 /* Map.storyboard in Resources */,
 				E79C8A761DCD166600846CA3 /* Splash.mov in Resources */,
+				E71B4D7E1E36818800E0FC5E /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1814113902F95C28C2631529 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "
-";
-			showEnvVarsInLog = 0;
-		};
 		5AF8F233B1096177F6A94382 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -308,8 +309,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "
-";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VashenCleaner/Pods-VashenCleaner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C74C7C735C49FB44A8685E59 /* [CP] Check Pods Manifest.lock */ = {
@@ -324,7 +324,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -406,9 +406,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Alan Ortega (92MFTFMAY7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Alan Ortega (92MFTFMAY7)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T83HJT87GD;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -454,9 +456,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Alan Ortega (T83HJT87GD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Alan Ortega (T83HJT87GD)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = T83HJT87GD;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -477,16 +481,17 @@
 		};
 		E714A6401D682715008DE774 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8C67FD178CF7DD1EDA67C552 /* Pods-VashenCleaner.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VashenCleaner/VashenCleaner.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = T83HJT87GD;
 				INFOPLIST_FILE = VashenCleaner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.VashenCleaner;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alan.ios.washer.washercleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -498,22 +503,23 @@
 		};
 		E714A6411D682715008DE774 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6A22B80BC3768B0176EFB979 /* Pods-VashenCleaner.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VashenCleaner/VashenCleaner.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = T83HJT87GD;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = VashenCleaner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.VashenCleaner;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alan.ios.washer.washercleaner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				Provi = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "VashenCleaner/VashenCleaner-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

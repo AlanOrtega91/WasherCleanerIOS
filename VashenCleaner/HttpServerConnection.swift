@@ -10,10 +10,9 @@ import Foundation
 
 public class HttpServerConnection
 {
-    private static var prod = "imanio.zone"
     
     public static func buildURL(location: String) -> String {
-        return ("http://" + prod + "/Vashen/API/" + location + "/")
+        return ("http://54.218.50.2/api/1.0.0/interfaz/" + location + "/")
     }
     
     public static func sendHttpRequestPost(urlPath: String, withParams params: String) throws -> Dictionary<String,AnyObject>{
@@ -31,9 +30,6 @@ public class HttpServerConnection
                 }.resume()
             _ = semaphore.wait(timeout: .distantFuture)
             if data != nil {
-                let stringResponseUTF8 = String(data: data, encoding: .utf8)
-                print(stringResponseUTF8)
-                
                 let dataString = try JSONSerialization.jsonObject(with: data, options: [.allowFragments])
                 return dataString as! Dictionary<String, AnyObject>
             } else {
